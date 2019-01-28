@@ -1,13 +1,37 @@
-# JS SDK Wrapper
+# JS Web SDK
 
-### What is it
+## What is it
 
-- A backwards compatible wrapper around the JavascriptSDK
+- A backwards compatible wrapper around the JavascriptSDK for usage in web browsers
 - Provides extendible datafile loading and caching strategies
 - Provides mechanisms for only parts of the page to block rendering until Optimizely is loaded (supplying a maximum timeout)
 - All new features are opt-in, can be used exactly the same way as JavascriptSDK if desired
 - Enqueue `track` calls that happen before the datafile is downloaded
 
+## Getting Started
+
+### Prerequisites
+- Like the JavaScript SDK, this wrapper requires an [ES5-compatible](https://caniuse.com/#feat=es5) environment.
+- This wrapper also requires a native ES6 Promise implementation. If your environment does not support Promises, you must set up a [Promise polyfill](https://github.com/stefanpenner/es6-promise).
+
+### Installation
+```shell
+npm install @optimizely/js-web-sdk
+```
+
+### Usage
+```js
+// ES Modules
+import * as optimizelySDK from '@optimizely/js-web-sdk'
+
+// CommonJS
+const optimizelySDK = require('@optimizely/js-web-sdk')
+```
+
+```html
+<!-- UMD script, assigns to window.jsWebSdk -->
+<script src="https://unpkg.com/@optimizely/js-web-sdk/dist/js-web-sdk.browser.umd.min.js"></script>
+```
 
 ## Datafile loading / management
 
