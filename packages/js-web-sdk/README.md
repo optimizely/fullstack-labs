@@ -15,7 +15,7 @@
 - This wrapper also requires a native ES6 Promise implementation. If your environment does not support Promises, you must set up a [Promise polyfill](https://github.com/stefanpenner/es6-promise).
 
 ### Installation
-```shell
+```
 npm install @optimizely/js-web-sdk
 ```
 
