@@ -73,7 +73,7 @@ export class FetchUrlDatafileLoader implements ResourceLoader<OptimizelyDatafile
 
   private static READY_STATE_COMPLETE = 4
 
-  async fetchDatafile(): Promise<OptimizelyDatafile> {
+  fetchDatafile(): Promise<OptimizelyDatafile> {
     const datafileUrl = `https://cdn.optimizely.com/datafiles/${this.sdkKey}.json`
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest()

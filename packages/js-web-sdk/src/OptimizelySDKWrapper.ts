@@ -99,7 +99,7 @@ export class OptimizelySDKWrapper implements OptimizelyClientWrapper {
    * @returns {Promise<boolean>}
    * @memberof OptimizelySDKWrapper
    */
-  public async onReady(config: { timeout?: number } = {}): Promise<boolean> {
+  public onReady(config: { timeout?: number } = {}): Promise<boolean> {
     let timeoutId: number | undefined
 
     if (config.timeout == null) {
