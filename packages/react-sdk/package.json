@@ -25,6 +25,9 @@
     "test": "jest --silent",
     "prepublishOnly": "npm run test && npm run build"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "prop-types": "^15.6.2",
     "react-broadcast": "0.7.1",
