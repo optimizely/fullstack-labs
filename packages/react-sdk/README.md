@@ -206,7 +206,7 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 Any component under the `<OptimizelyProvider>` can get access to the optimizely js-web-sdk via the HoC `withOptimizely`
 
 ```jsx
-import { withOptimizely } from '@optimizely/react-sdk`
+import { withOptimizely } from '@optimizely/react-sdk'
 
 class MyComp extends React.Component {
   constructor(props) {
@@ -233,7 +233,7 @@ const WrappedMyComponent = withOptimizely(MyComp)
 Tracking is easy with the `withOptimizely` HoC.
 
 ```jsx
-import { withOptimizely } from '@optimizely/react-sdk`
+import { withOptimizely } from '@optimizely/react-sdk'
 
 class SignupButton extends React.Component {
   onClick = () => {
