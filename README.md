@@ -29,9 +29,11 @@ This repository is a monorepo that we manage using [Lerna](https://github.com/le
 
 
 
+## Contributing
+
+Please see [CONTRIBUTING](./CONTRIBUTING.md)
 
 ## Development
-
 
 #### Bootstrapping all packages
 

@@ -251,3 +251,69 @@ class SignupButton extends React.Component {
 
 const WrappedSignupButton = withOptimizely(SignupButton)
 ```
+
+## Credits
+
+First-party code (under lib/ and dist/) is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
+
+## Additional Code
+Prod dependencies are as follows:
+
+```json
+{
+  "js-tokens@4.0.0": {
+    "licenses": "MIT",
+    "publisher": "Simon Lydell",
+    "repository": "https://github.com/lydell/js-tokens"
+  },
+  "loose-envify@1.4.0": {
+    "licenses": "MIT",
+    "publisher": "Andres Suarez",
+    "repository": "https://github.com/zertosh/loose-envify"
+  },
+  "object-assign@4.1.1": {
+    "licenses": "MIT",
+    "publisher": "Sindre Sorhus",
+    "repository": "https://github.com/sindresorhus/object-assign"
+  },
+  "prop-types@15.6.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/prop-types"
+  },
+  "react-broadcast@0.7.1": {
+    "licenses": "MIT",
+    "publisher": "Michael Jackson",
+    "repository": "https://github.com/ReactTraining/react-broadcast"
+  },
+  "react@16.7.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react"
+  },
+  "scheduler@0.12.0": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react"
+  },
+  "utility-types@2.1.0": {
+    "licenses": "MIT",
+    "publisher": "Piotr Witek",
+    "repository": "https://github.com/piotrwitek/utility-types"
+  },
+  "warning@3.0.0": {
+    "licenses": "BSD-3-Clause",
+    "publisher": "Berkeley Martinez",
+    "repository": "https://github.com/BerkeleyTrue/warning"
+  }
+}
+
+```
+
+To regenerate this, run the following command:
+
+```sh
+npx license-checker --production --json | jq 'map_values({ licenses, publisher, repository }) | del(.[][] | nulls)'
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](../../CONTRIBUTING.md)
+

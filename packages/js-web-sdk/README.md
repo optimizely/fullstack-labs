@@ -89,3 +89,52 @@ _When using optimizely async the user will only have to pay the loading cost onc
 ## Using React
 
 This SDK can be used stand alone to bolster the current javascript-sdk with things like automatic datafile loading and caching.  It can also be used with the [ReactSDK](../react-sdk) to simplify Feature Flagging and AB Testing in React.
+
+## Credits
+
+First-party code (under lib/ and dist/) is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
+
+## Additional Code
+Prod dependencies are as follows:
+
+```json
+{
+  "json-schema@0.2.3": {
+    "licenses": [
+      "AFLv2.1",
+      "BSD"
+    ],
+    "publisher": "Kris Zyp",
+    "repository": "https://github.com/kriszyp/json-schema"
+  },
+  "lodash@4.17.11": {
+    "licenses": "MIT",
+    "publisher": "John-David Dalton",
+    "repository": "https://github.com/lodash/lodash"
+  },
+  "murmurhash@0.0.2": {
+    "licenses": "MIT*",
+    "repository": "https://github.com/perezd/node-murmurhash"
+  },
+  "sprintf-js@1.1.1": {
+    "licenses": "BSD-3-Clause",
+    "publisher": "Alexandru Mărășteanu",
+    "repository": "https://github.com/alexei/sprintf.js"
+  },
+  "uuid@3.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kelektiv/node-uuid"
+  }
+}
+```
+
+To regenerate this, run the following command:
+
+```sh
+npx license-checker --production --json | jq 'map_values({ licenses, publisher, repository }) | del(.[][] | nulls)'
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](../../CONTRIBUTING.md)
+
