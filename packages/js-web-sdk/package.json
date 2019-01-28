@@ -1,6 +1,6 @@
 {
   "name": "@optimizely/js-web-sdk",
-  "version": "3.0.0-beta6",
+  "version": "3.0.0-beta1",
   "description": "Browser wrapper for Optimizely's Javascript SDK",
   "author": "Jordan Garcia <jordan@optimizely.com>",
   "homepage": "https://github.com/optimizely/fullstack-labs/tree/master/packages/js-web-sdk",

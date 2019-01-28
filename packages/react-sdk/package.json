@@ -1,6 +1,6 @@
 {
   "name": "@optimizely/react-sdk",
-  "version": "0.2.0-beta4",
+  "version": "0.1.0-beta1",
   "description": "Use Optimizely Feature Flags and AB Tests easily in React with a library of pre-built components",
   "author": "Jordan Garcia <jordan@gmail.com>",
   "homepage": "https://github.com/optimizely/fullstack-labs/tree/master/packages/react-sdk",
@@ -31,10 +31,11 @@
     "utility-types": "^2.1.0"
   },
   "peerDependencies": {
-    "react": ">=15 || ^16"
+    "react": ">=15 || ^16",
+    "@optimizely/js-web-sdk": ">=2 || ^3"
   },
   "devDependencies": {
-    "@optimizely/js-web-sdk": "3.0.0-beta5",
+    "@optimizely/js-web-sdk": "3.0.0-beta1",
     "@types/enzyme": "^3.1.15",
     "@types/enzyme-adapter-react-16": "^1.0.3",
     "@types/jest": "^23.3.12",
