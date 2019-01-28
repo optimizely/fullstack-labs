@@ -24,7 +24,7 @@ import {
   OptimizelyVariation,
   OptimizelyFeature,
 } from '@optimizely/react-sdk'
-import optimizelySDK from '@optimizely/js-web-sdk'
+import * as optimizelySDK from '@optimizely/js-web-sdk'
 
 const optimizely = optimizelySDK.createInstance({
   sdkKey: 'your-optimizely-sdk-key',
@@ -94,7 +94,7 @@ any delay or asynchronous complexity to your application.
 
 ```jsx
 import { OptimizelyProvider } from '@optimizely/react-sdk'
-import optimizelySDK from '@optimizely/js-web-sdk'
+import * as optimizelySDK from '@optimizely/js-web-sdk'
 
 const optimizely = optimizelySDK.createInstance({
   datafile: window.datafile,
@@ -119,7 +119,7 @@ loads or the timeout is up (in that case `variation` is `null` and `isFeatureEna
 
 ```jsx
 import { OptimizelyProvider } from '@optimizely/react-sdk'
-import optimizelySDK from '@optimizely/js-web-sdk'
+import * as optimizelySDK from '@optimizely/js-web-sdk'
 
 const optimizely = optimizelySDK.createInstance({
   SDKKey: 'your-optimizely-sdk-key', // Optimizely environment key
