@@ -29,7 +29,7 @@ const optimizelySDK = require('@optimizely/js-web-sdk')
 ```
 
 ```html
-<!-- UMD script, assigns to window.jsWebSdk -->
+<!-- UMD script, assigns to window.optimizelySDK -->
 <script src="https://unpkg.com/@optimizely/js-web-sdk/dist/js-web-sdk.browser.umd.min.js"></script>
 ```
 
