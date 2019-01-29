@@ -122,7 +122,7 @@ import { OptimizelyProvider } from '@optimizely/react-sdk'
 import * as optimizelySDK from '@optimizely/js-web-sdk'
 
 const optimizely = optimizelySDK.createInstance({
-  SDKKey: 'your-optimizely-sdk-key', // Optimizely environment key
+  sdkKey: 'your-optimizely-sdk-key', // Optimizely environment key
 })
 
 class App extends React.Component {

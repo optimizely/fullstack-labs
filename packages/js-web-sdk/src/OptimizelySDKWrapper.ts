@@ -439,7 +439,7 @@ export class OptimizelySDKWrapper implements OptimizelyClientWrapper {
         sdkKey: config.sdkKey,
       })
     } else {
-      throw new Error('Must supply either "datafile", "SDKKey"')
+      throw new Error('Must supply either "datafile", "sdkKey"')
     }
 
     return new Resource(datafileLoader)
