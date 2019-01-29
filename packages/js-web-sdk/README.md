@@ -57,7 +57,7 @@ _Asnyc load and wait until datafile is loaded_
 ```js
 import * as optimizelySDK from '@optimizely/js-web-sdk'
 const optimizely = optimizelySDK.createInstance({
-  SDKKey: 'GaXr9RoDhRcqXJm3ruskRa',
+  sdkKey: 'GaXr9RoDhRcqXJm3ruskRa',
 })
 
 // At this point optimizely can be used, on first page load the datafile will not be fetched and methods will no-op
@@ -73,7 +73,7 @@ By using `await optimizely.onReady()` you can gaurantee code wont be run until t
 ```js
 import * as optimizelySDK from '@optimizely/js-web-sdk'
 const optimizely = optimizelySDK.createInstance({
-  SDKKey: 'GaXr9RoDhRcqXJm3ruskRa',
+  sdkKey: 'GaXr9RoDhRcqXJm3ruskRa',
 })
 
 await optimizely.onReady()
@@ -86,7 +86,7 @@ However, the above example isn't great because Optimizely could time out due to 
 ```js
 import * as optimizelySDK from '@optimizely/js-web-sdk'
 const optimizely = optimizelySDK.createInstance({
-  SDKKey: 'GaXr9RoDhRcqXJm3ruskRa',
+  sdkKey: 'GaXr9RoDhRcqXJm3ruskRa',
 })
 
 // Dont wait more than 200ms, if there is a cached datafile this will immediately resolve
