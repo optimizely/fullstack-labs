@@ -80,7 +80,8 @@ npm install @optimizely/js-web-sdk @optimizely/react-sdk
 # Usage
 
 ## `<OptimizelyProvider>`
-Tequired at the root level. Leverages React’s `Context` API to allow access to the OptimizelySDKWrapper to components like `<OptimizelyFeature>` and `<OptimizelyExperiment>`.
+
+Required at the root level. Leverages React’s `Context` API to allow access to the OptimizelySDKWrapper to components like `<OptimizelyFeature>` and `<OptimizelyExperiment>`.
 
 *props*
 * `optimizely : OptimizelySDK` Instance of the OptimizelySDK from `@optimizely/js-web-sdk`
