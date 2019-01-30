@@ -1,15 +1,15 @@
-# Optimizely SDK React
+# Optimizely SDK React wrapper and framework extension
 
-Use Optimizely Feature Flags and AB Tests easily in React with a library of pre-built components.
+Use Optimizely [feature flags](https://docs.developers.optimizely.com/full-stack/docs/use-feature-flags) and [A/B tests](https://docs.developers.optimizely.com/full-stack/docs/run-a-b-tests) in React with a library of pre-built components.
 
 ### Features
 
 - Automatic datafile downloading and caching (through LocalStorage)
-- User ID + Attributes memoization
-- Render blocking until datafile is ready via an easy to use React API
-- Optimizely Timeout - only block rendering up to X ms
-- Event queuing for `track`, allows `track` calls to happen before datafile is downloaded
-- Library of React components to use with Feature Flags and AB Tests
+- User ID + attributes memoization
+- Render blocking until datafile is ready via a React API
+- Optimizely timeout (only block rendering up to the number of milliseconds you specify)
+- Event queuing for `track`, which allows `track` calls to happen before datafile is downloaded
+- Library of React components to use with [feature flags](https://docs.developers.optimizely.com/full-stack/docs/use-feature-flags) and [A/B tests](https://docs.developers.optimizely.com/full-stack/docs/run-a-b-tests)
 
 ### Compatibility
 
@@ -71,26 +71,26 @@ class App extends React.Component {
 
 # Installation
 
-To use the `ReactSDK` components you must use the [`@optimizely/js-web-sdk`](../js-web-sdk/) which is an API compatible SDK wrapper build on top of the existing `@optimizely/javascript-sdk`.  `@optimizely/js-web-sdk` adds a few new API methods to enabled greater functionality (async loading and render blocking) with the ReactSDK.
+To use the `ReactSDK` components, you must use the [`@optimizely/js-web-sdk`](../js-web-sdk/), which is an API-compatible SDK wrapper built on top of the existing `@optimizely/javascript-sdk`. `@optimizely/js-web-sdk` adds API methods to enable better functionality (asynchronous loading and render blocking) with the ReactSDK.
 
 ```
 npm install @optimizely/js-web-sdk @optimizely/react-sdk
 ```
 
 # Usage
+
 ## `<OptimizelyProvider>`
-This is required at the root level and leverages React’s `Context` API to allow access to the OptimizelySDKWrapper to components like `<OptimizelyFeature>`  and  `<OptimizelyExperiment>`
+Tequired at the root level. Leverages React’s `Context` API to allow access to the OptimizelySDKWrapper to components like `<OptimizelyFeature>` and `<OptimizelyExperiment>`.
 
 *props*
-* `optimizely : OptimizelySDK` instance of the OptimizelySDK from `@optimizely/js-web-sdk`
-* `userId : String` userId to be passed to the SDK for every Feature Flag / AB Test / `track` call
-* `userAttributes : Object` (optional) userAttributes passed for every Feature Flag / AB Test / `track` call
-* `timeout : Number` (optional) the amount for OptimizelyExperiment and OptimizelyFeature components to render `null` before resolving
+* `optimizely : OptimizelySDK` Instance of the OptimizelySDK from `@optimizely/js-web-sdk`
+* `userId : String` userId to be passed to the SDK for every feature flag, A/B test, or `track` call
+* `userAttributes : Object` (optional) userAttributes passed for every feature flag, A/B test, or `track` call
+* `timeout : Number` (optional) The amount of time for OptimizelyExperiment and OptimizelyFeature components to render `null` before resolving
 
-### Loading the datafile synchronously
+### Load the datafile synchronously
 
-This is the preferred method and ensure Optimizely is always ready and loaded and doesn't add
-any delay or asynchronous complexity to your application.
+Synchronous loading is the preferred method to ensure that Optimizely is always ready and doesn't add any delay or asynchronous complexity to your application.
 
 ```jsx
 import { OptimizelyProvider } from '@optimizely/react-sdk'
@@ -111,11 +111,9 @@ class App extends React.Component {
 }
 ```
 
-### Loading the datafile asynchronously
+### Load the datafile asynchronously
 
-If you don't have the datafile already downloaded then the `js-web-sdk` provides functionality to fetch the datafile for you.  However instead of waiting for the datafile to fetch before you render your app, you can immediately render your app and provide a `timeout`
-option to `<OptimizelyProvider optimizely={optimizely} timeout={200}>`.  This will block rendering of `<OptimizelyExperiment>` and `<OptimizelyFeature>` components until the datafile
-loads or the timeout is up (in that case `variation` is `null` and `isFeatureEnabled` is `false`)
+If you don't have the datafile downloaded, the `js-web-sdk` can fetch the datafile for you. However, instead of waiting for the datafile to fetch before you render your app, you can immediately render your app and provide a `timeout` option to `<OptimizelyProvider optimizely={optimizely} timeout={200}>`. This will block rendering of `<OptimizelyExperiment>` and `<OptimizelyFeature>` components until the datafile loads or the timeout is up (in this case, `variation` is `null` and `isFeatureEnabled` is `false`).
 
 ```jsx
 import { OptimizelyProvider } from '@optimizely/react-sdk'
@@ -141,11 +139,13 @@ class App extends React.Component {
 }
 ```
 
-# Use Cases
+# Use cases
+
 ## Experiment
+
 ### Render different components based on variation
 
-The first way to use OptimizelyExperiment is via a child render function. If the component contains a function as a child, `<OptimizelyExperiment>` will call that with the result of `optimizely.activate(experimentKey)`
+You can use OptimizelyExperiment via a child render function. If the component contains a function as a child, `<OptimizelyExperiment>` will call that function, with the result of `optimizely.activate(experimentKey)`.
 
 ```jsx
 <OptimizelyExperiment experiment="exp1">
@@ -157,9 +157,9 @@ The first way to use OptimizelyExperiment is via a child render function. If the
 </OptimizelyExperiment>
 ```
 
-Or you can also use the `<OptimizelyVariation>` component.
+You can also use the `<OptimizelyVariation>` component.
 
-**Note: Be sure to include an `<OptimizelyVariation default>` component if you are loading the datafile async, as the render path if the datafile fails to load.**
+**Note: If you are loading the datafile asynchrounously, be sure to include an `<OptimizelyVariation default>` component as the render path if the datafile fails to load.**
 
 ```jsx
 import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk'
@@ -179,7 +179,9 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 ```
 
 ## Feature
+
 ### Render something if feature is enabled
+
 ```jsx
 <OptimizelyFeature feature="new-login-page">
   {(isEnabled, variables) => (
@@ -191,6 +193,7 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 ```
 
 ### Render feature variables
+
 ```jsx
 <OptimizelyFeature feature="new-login-page">
   {(isEnabled, variables) => (
@@ -201,9 +204,9 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 </OptimizelyFeature>
 ```
 
-
 ### Programmatic access inside component
-Any component under the `<OptimizelyProvider>` can get access to the optimizely js-web-sdk via the HoC `withOptimizely`
+
+Any component under the `<OptimizelyProvider>` can access the Optimizely `js-web-sdk` via the higher-order component (HoC) `withOptimizely`.
 
 ```jsx
 import { withOptimizely } from '@optimizely/react-sdk'
@@ -228,9 +231,9 @@ class MyComp extends React.Component {
 const WrappedMyComponent = withOptimizely(MyComp)
 ```
 
-
 ## Tracking
-Tracking is easy with the `withOptimizely` HoC.
+
+Use the `withOptimizely` HoC for tracking.
 
 ```jsx
 import { withOptimizely } from '@optimizely/react-sdk'
@@ -256,7 +259,8 @@ const WrappedSignupButton = withOptimizely(SignupButton)
 
 First-party code (under lib/ and dist/) is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
 
-## Additional Code
+## Additional code
+
 Prod dependencies are as follows:
 
 ```json
@@ -307,13 +311,13 @@ Prod dependencies are as follows:
 
 ```
 
-To regenerate this, run the following command:
+To regenerate the dependencies, run the following command:
 
 ```sh
 npx license-checker --production --json | jq 'map_values({ licenses, publisher, repository }) | del(.[][] | nulls)'
 ```
 
-## Contributing
+## Contribute to this repo
 
-Please see [CONTRIBUTING](../../CONTRIBUTING.md)
+Please see [CONTRIBUTING](../../CONTRIBUTING.md) for more information.
 
