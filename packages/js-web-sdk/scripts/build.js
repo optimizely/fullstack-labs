@@ -12,7 +12,7 @@ function exec(command, extraEnv) {
 }
 
 const packageName = 'js-web-sdk';
-const umdName = 'optimizelySDK'
+const umdName = 'optimizelySdk'
 
 // console.log("\nBuilding ES modules...");
 
