@@ -1,4 +1,4 @@
-# Optimizely SDK React wrapper and framework extension
+# Optimizely SDK React Wrapper
 
 Use Optimizely [feature flags](https://docs.developers.optimizely.com/full-stack/docs/use-feature-flags) and [A/B tests](https://docs.developers.optimizely.com/full-stack/docs/run-a-b-tests) in React with a library of pre-built components.
 
