@@ -96,5 +96,31 @@ export default function testPublishedSDKWrapper(wrapperIndex: SDKWrapperIndex): 
         assert.isTrue(instance.isInitialized)
       })
     })
+
+    describe('when constructed with datafileUrl', function() {
+      let datafileStubs: DatafileRequestStubs
+
+      this.beforeEach(() => {
+        datafileStubs = setupDatafileRequestStubs()
+        datafileStubs.setup()
+        instance = wrapperIndex.createInstance({
+          datafileUrl: 'http://www.test.com/datafile.json',
+          eventDispatcher: { dispatchEvent },
+          logger: { log },
+        })
+      })
+
+      this.afterEach(() => {
+        datafileStubs.restore()
+      })
+
+      it('should support onReady', async () => {
+        assert.isFalse(instance.isInitialized)
+        assert.equal(datafileStubs.requests[0].url, 'http://www.test.com/datafile.json')
+        datafileStubs.requests[0].respond(200, {}, JSON.stringify(datafile));
+        await instance.onReady()
+        assert.isTrue(instance.isInitialized)
+      })
+    })
   }
 }

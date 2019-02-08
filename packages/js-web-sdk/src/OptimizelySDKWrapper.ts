@@ -39,6 +39,7 @@ type UserAttributes = {
 
 export interface OptimizelySDKWrapperConfig extends Partial<optimizely.Config> {
   datafile?: OptimizelyDatafile
+  datafileUrl?: string
   sdkKey?: string
 }
 
@@ -434,12 +435,16 @@ export class OptimizelySDKWrapper implements OptimizelyClientWrapper {
       datafileLoader = new ProvidedDatafileLoader({
         datafile: config.datafile,
       })
+    } else if (config.datafileUrl) {
+      datafileLoader = new FetchUrlDatafileLoader({
+        datafileUrl: config.datafileUrl,
+      })
     } else if (config.sdkKey) {
       datafileLoader = new FetchUrlDatafileLoader({
         sdkKey: config.sdkKey,
       })
     } else {
-      throw new Error('Must supply either "datafile", "sdkKey"')
+      throw new Error('Must supply either "datafile", "datafileUrl", "sdkKey"')
     }
 
     return new Resource(datafileLoader)

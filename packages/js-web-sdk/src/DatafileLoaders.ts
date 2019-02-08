@@ -37,16 +37,23 @@ type FetchUrlCacheEntry = {
 }
 
 export class FetchUrlDatafileLoader implements ResourceLoader<OptimizelyDatafile> {
-  private sdkKey: string
+  private datafileUrl: string | undefined
+  private sdkKey: string | undefined
   private localStorageKey: string
 
   // 1 week in ms = 7 days * 24 hours * 60 minutes * 60 seconds * 1000 ms
   private static MAX_CACHE_AGE_MS: number = 7 * 24 * 60 * 60 * 1000
 
   constructor(config: {
-    sdkKey: string
+    datafileUrl?: string
+    sdkKey?: string
     localStorageKey?: string
   }) {
+    if (!config.datafileUrl && !config.sdkKey) {
+      throw new Error('Must supply either "datafileUrl", "sdkKey"')
+    }
+
+    this.datafileUrl = config.datafileUrl
     this.sdkKey = config.sdkKey
     this.localStorageKey = config.localStorageKey || 'optly_fs_datafile'
   }
@@ -89,7 +96,7 @@ export class FetchUrlDatafileLoader implements ResourceLoader<OptimizelyDatafile
   private static READY_STATE_COMPLETE = 4
 
   fetchDatafile(): Promise<OptimizelyDatafile> {
-    const datafileUrl = `https://cdn.optimizely.com/datafiles/${this.sdkKey}.json`
+    const datafileUrl = this.datafileUrl || `https://cdn.optimizely.com/datafiles/${this.sdkKey}.json`
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest()
       req.open(FetchUrlDatafileLoader.GET_METHOD, datafileUrl, true);
