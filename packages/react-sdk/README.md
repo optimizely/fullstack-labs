@@ -101,11 +101,11 @@ const optimizely = optimizelySDK.createInstance({
   datafile: window.datafile,
 })
 
-class App extends React.Component {
+class AppWrapper extends React.Component {
   render() {
     return (
       <OptimizelyProvider optimizely={optimizely} userId={window.userId}>
-        <HomePage />
+        <App />
       </OptimizelyProvider>
     )
   }
