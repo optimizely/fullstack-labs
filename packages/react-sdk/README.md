@@ -105,7 +105,7 @@ class App extends React.Component {
   render() {
     return (
       <OptimizelyProvider optimizely={optimizely} userId={window.userId}>
-        <App />
+        <HomePage />
       </OptimizelyProvider>
     )
   }
