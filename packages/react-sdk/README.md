@@ -133,7 +133,7 @@ class App extends React.Component {
         userId={window.userId}
         userAttributes={{ plan_type: 'bronze' }}
       >
-        <App />
+        <HomePage />
       </OptimizelyProvider>
     )
   }
