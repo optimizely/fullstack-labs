@@ -45,7 +45,7 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
       if (optimizely === null) {
         throw new Error('optimizely prop must be supplied')
       }
-      const variation = optimizely.getVariation(experiment)
+      const variation = optimizely.activate(experiment)
       this.state = {
         canRender: true,
         variation,
