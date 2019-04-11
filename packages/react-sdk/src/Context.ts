@@ -19,6 +19,7 @@ import { createContext } from 'react-broadcast'
 
 const { Consumer, Provider } = createContext({
   optimizely: null,
+  isServerSide: false,
   timeout: 0,
 })
 

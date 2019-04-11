@@ -18,7 +18,9 @@ import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 import { VariableValuesObject } from '@optimizely/js-web-sdk'
 import { VariationProps } from './Variation'
 
-export type ChildrenRenderFunction = (variableValues: VariableValuesObject) => React.ReactNode
+export type ChildrenRenderFunction = (
+  variableValues: VariableValuesObject,
+) => React.ReactNode
 
 type ChildRenderFunction = (variation: string | null) => React.ReactNode
 
@@ -29,7 +31,7 @@ export interface ExperimentProps extends WithOptimizelyProps {
 }
 
 export interface ExperimentState {
-  canRender: boolean,
+  canRender: boolean
   variation: string | null
 }
 
@@ -37,9 +39,22 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
   constructor(props: ExperimentProps) {
     super(props)
 
-    this.state = {
-      canRender: false,
-      variation: null,
+    const { isServerSide, optimizely, experiment } = props
+
+    if (isServerSide) {
+      if (optimizely === null) {
+        throw new Error('optimizely prop must be supplied')
+      }
+      const variation = optimizely.getVariation(experiment)
+      this.state = {
+        canRender: true,
+        variation,
+      }
+    } else {
+      this.state = {
+        canRender: false,
+        variation: null,
+      }
     }
   }
 
@@ -57,7 +72,6 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
       })
     })
   }
-
 
   render() {
     const { children } = this.props
@@ -93,9 +107,7 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
       },
     )
 
-    return match
-      ? React.cloneElement(match, { variation: variation })
-      : null
+    return match ? React.cloneElement(match, { variation: variation }) : null
   }
 }
 

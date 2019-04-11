@@ -24,6 +24,7 @@ interface OptimizelyProviderProps {
   userId: string
   timeout?: number
   userAttributes?: UserAttributes
+  isServerSide?: boolean
 }
 
 interface OptimizelyProviderState {
@@ -50,8 +51,10 @@ export class OptimizelyProvider extends React.Component<
 
   render() {
     const { children, timeout } = this.props
+    const isServerSide = !!this.props.isServerSide
     const value = {
       optimizely: this.sdkWrapper,
+      isServerSide,
       timeout,
     }
 
