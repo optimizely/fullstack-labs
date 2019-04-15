@@ -2,7 +2,8 @@ import * as React from 'react'
 import * as PropTypes from 'prop-types'
 
 import './App.css'
-import Example from './Example'
+const Example = require('./Example')
+
 
 import {
   OptimizelyProvider,
