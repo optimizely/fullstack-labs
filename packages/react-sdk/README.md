@@ -256,6 +256,75 @@ class SignupButton extends React.Component {
 const WrappedSignupButton = withOptimizely(SignupButton)
 ```
 
+
+## Server Side Rendering
+Right now server side rendering is possible with the `js-web-sdk` and `react-sdk` with a few caveats.
+
+**Caveats**
+
+1. You must download the datafile manually and pass in via the `datafile` option.  Can not use `sdkKey` to automatically download.
+
+2. Rendering of components must be completely synchronous (this is true for all server side rendering)
+
+### Setting up `<OptimizelyProvider>`
+
+Similar to browser side rendering you will need to wrap your app (or portion of the app using Optimizely) in the `<OptimizelyProvider>` component.  A new prop
+`isServerSide` must be equal to true.
+
+```jsx
+<OptimizelyProvider optimizely={optimizely} userId="user1" isServerSide={true}>
+  <App />
+</OptimizelyProvider>
+```
+
+All other Optimizely components, such as `<OptimizelyFeature>` and `<OptimizelyExperiment>` can remain the same.
+
+### Full example
+
+```jsx
+import * as React from 'react'
+import * as ReactDOMServer from 'react-dom/server'
+
+import * as optimizelySDK from '@optimizely/js-web-sdk'
+import {
+  OptimizelyProvider,
+  OptimizelyFeature,
+  OptimizelyExperiment,
+  OptimizelyVariation,
+} from '@optimizely/react-sdk'
+
+const fetch = require('node-fetch')
+
+async function main() {
+  const resp = await fetch(
+    'https://cdn.optimizely.com/datafiles/BsSyVRsUbE3ExgGCJ9w1to.json',
+  )
+  const datafile = await resp.json()
+  const optimizely = optimizelySDK.createInstance({
+    datafile,
+  })
+
+  const output = ReactDOMServer.renderToString(
+    <OptimizelyProvider optimizely={optimizely} userId="user1" isServerSide={true}>
+      <OptimizelyFeature feature="feature1">
+        {featureEnabled => (featureEnabled ? <p>enabled</p> : <p>disabled</p>)}
+      </OptimizelyFeature>
+
+      <OptimizelyExperiment experiment="abtest1">
+        <OptimizelyVariation variation="var1">
+          <p>variation 1</p>
+        </OptimizelyVariation>
+        <OptimizelyVariation default>
+          <p>default variation</p>
+        </OptimizelyVariation>
+      </OptimizelyExperiment>
+    </OptimizelyProvider>,
+  )
+  console.log('output', output)
+}
+main()
+```
+
 ## Credits
 
 First-party code (under lib/ and dist/) is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
