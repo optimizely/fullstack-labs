@@ -90,10 +90,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@optimizely/optimizely-sdk@3.0.0-rc2":
-  version "3.0.0-rc2"
-  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/optimizely-sdk/-/@optimizely/optimizely-sdk-3.0.0-rc2.tgz#0ef0074903ce69747de2e53d241b57619f4f2d5b"
-  integrity sha1-DvAHSQPOaXR94uU9JBtXYZ9PLVs=
+"@optimizely/optimizely-sdk@3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.0.1.tgz#32f3053a5dd46719752506cf14f59e22d80b9bbc"
+  integrity sha512-5ffZ3GUxsCU0lzmYnUJQY6sHzRgVfSAgc53T00XQCJJUq7fd6CfXA/wnB6gFJln/8BQrN7cgW4Dpw3UPQn2xYg==
   dependencies:
     json-schema "^0.2.3"
     lodash "^4.0.0"
