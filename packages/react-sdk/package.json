@@ -1,6 +1,6 @@
 {
   "name": "@optimizely/react-sdk",
-  "version": "0.1.3-beta1",
+  "version": "0.2.0-beta1",
   "description": "Use Optimizely Feature Flags and AB Tests easily in React with a library of pre-built components",
   "author": "Jordan Garcia <jordan@gmail.com>",
   "homepage": "https://github.com/optimizely/fullstack-labs/tree/master/packages/react-sdk",
