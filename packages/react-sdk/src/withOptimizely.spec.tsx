@@ -41,6 +41,7 @@ async function sleep(timeout = 0): Promise<{}> {
 type TestProps = {
   optimizely: UserWrappedOptimizelySDK
   optimizelyReadyTimeout: number | undefined
+  isServerSide: boolean
 }
 
 class InnerComponent extends React.Component<TestProps, any> {
@@ -85,6 +86,30 @@ describe('withOptimizely', () => {
     const innerComponent = component.find(InnerComponent)
     expect(innerComponent.props()).toEqual({
       optimizely: wrappedOptimizely,
+      isServerSide: false,
+      optimizelyReadyTimeout: 200,
+    })
+  })
+
+  it('should inject the isServerSide prop', async () => {
+    const optimizelyMock = ({} as unknown) as OptimizelyClientWrapper
+
+    const component = mount(
+      <OptimizelyProvider
+        optimizely={optimizelyMock}
+        timeout={200}
+        userId="jordan"
+        userAttributes={{ plan_type: 'bronze' }}
+        isServerSide={true}
+      >
+        <WrapperComponent />
+      </OptimizelyProvider>,
+    )
+
+    const innerComponent = component.find(InnerComponent)
+    expect(innerComponent.props()).toEqual({
+      optimizely: wrappedOptimizely,
+      isServerSide: true,
       optimizelyReadyTimeout: 200,
     })
   })

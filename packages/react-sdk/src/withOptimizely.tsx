@@ -22,6 +22,7 @@ import { UserWrappedOptimizelySDK } from './createUserWrapper';
 export interface WithOptimizelyProps {
   optimizely: UserWrappedOptimizelySDK | null
   optimizelyReadyTimeout: number | undefined
+  isServerSide: boolean
 }
 
 export function withOptimizely<P extends WithOptimizelyProps>(
@@ -33,12 +34,14 @@ export function withOptimizely<P extends WithOptimizelyProps>(
         <OptimizelyContextConsumer>
           {(value: {
             optimizely: UserWrappedOptimizelySDK
+            isServerSide: boolean
             timeout: number | undefined
           }) => (
             <Component
               {...this.props}
               optimizely={value.optimizely}
               optimizelyReadyTimeout={value.timeout}
+              isServerSide={value.isServerSide}
             />
           )}
         </OptimizelyContextConsumer>

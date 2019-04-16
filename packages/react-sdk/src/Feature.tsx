@@ -25,7 +25,7 @@ export interface FeatureProps extends WithOptimizelyProps {
 }
 
 export interface FeatureState {
-  canRender: boolean,
+  canRender: boolean
   isEnabled: boolean
   variables: VariableValuesObject
 }
@@ -34,10 +34,24 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
   constructor(props: FeatureProps) {
     super(props)
 
-    this.state = {
-      canRender: false,
-      isEnabled: false,
-      variables: {},
+    const { isServerSide, optimizely, feature } = props
+    if (isServerSide) {
+      if (optimizely === null) {
+        throw new Error('optimizely prop must be supplied')
+      }
+      const isEnabled = optimizely.isFeatureEnabled(feature)
+      const variables = optimizely.getFeatureVariables(feature)
+      this.state = {
+        canRender: true,
+        isEnabled,
+        variables,
+      }
+    } else {
+      this.state = {
+        canRender: false,
+        isEnabled: false,
+        variables: {},
+      }
     }
   }
 
@@ -57,7 +71,6 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
       })
     })
   }
-
 
   render() {
     const { children } = this.props
