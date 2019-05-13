@@ -16,7 +16,7 @@
 import * as React from 'react'
 import * as PropTypes from 'prop-types'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
-import { VariableValuesObject } from '@optimizely/js-web-sdk'
+import { VariableValuesObject } from './createUserWrapper'
 
 export interface FeatureProps extends WithOptimizelyProps {
   // TODO add support for overrideUserId

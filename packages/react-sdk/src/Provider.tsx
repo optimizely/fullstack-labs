@@ -16,11 +16,15 @@
 import * as React from 'react'
 
 import { OptimizelyContextProvider } from './Context'
-import { OptimizelySDKWrapper, OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
-import { UserAttributes, createUserWrapper, UserWrappedOptimizelySDK } from './createUserWrapper';
+import * as optimizely from '@optimizely/optimizely-sdk'
+import {
+  UserAttributes,
+  createUserWrapper,
+  UserWrappedOptimizelySDK,
+} from './createUserWrapper'
 
 interface OptimizelyProviderProps {
-  optimizely: OptimizelyClientWrapper
+  optimizely: optimizely.Client
   userId: string
   timeout?: number
   userAttributes?: UserAttributes
@@ -59,9 +63,7 @@ export class OptimizelyProvider extends React.Component<
     }
 
     return (
-      <OptimizelyContextProvider value={value}>
-        {children}
-      </OptimizelyContextProvider>
+      <OptimizelyContextProvider value={value}>{children}</OptimizelyContextProvider>
     )
   }
 }

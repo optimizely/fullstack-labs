@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OptimizelyClientWrapper, VariableValuesObject } from '@optimizely/js-web-sdk'
+import * as optimizely from '@optimizely/optimizely-sdk'
+
+export type VariableValuesObject = {
+  [key: string]: boolean | number | string | null
+}
 
 export type UserAttributes = { [attribute: string]: any }
 
 type EventTags = { [tagKey: string]: boolean | number | string }
 
-export interface UserWrappedOptimizelySDK extends OptimizelyClientWrapper {
+export interface UserWrappedOptimizelySDK extends optimizely.Client {
+  onReady(opts?: { timeout?: number }): Promise<any>
+
   activate(
     experimentKey: string,
     overrideUserId?: string,
@@ -80,7 +86,6 @@ export interface UserWrappedOptimizelySDK extends OptimizelyClientWrapper {
   ): void
 }
 
-
 /**
  * Wrapper to memoize the userId / userAttributes around an OptimizelySDKWrapper instance
  *
@@ -100,7 +105,7 @@ export function createUserWrapper({
   userId,
   userAttributes,
 }: {
-  instance: OptimizelyClientWrapper
+  instance: optimizely.Client
   userId: string
   userAttributes?: UserAttributes
 }): UserWrappedOptimizelySDK {
@@ -143,10 +148,63 @@ export function createUserWrapper({
       overrideUserId?: string,
       overrideAttributes?: UserAttributes,
     ) {
-      return instance.getFeatureVariables(
-        featureKey,
-        ...getUserIdAndAttributes(overrideUserId, overrideAttributes),
+      let [userId, attributes] = getUserIdAndAttributes(
+        overrideUserId,
+        overrideAttributes,
       )
+      let variableObj: { [key: string]: any } = {}
+      try {
+        const config = (instance as any).projectConfigManager.getConfig()
+        const feature = config.featureKeyMap[featureKey]
+        if (!feature) {
+          return {}
+        }
+        let variables: object[] = feature.variables
+        variables.forEach((variableDef: any) => {
+          let type: any = variableDef.type
+          let key: any = variableDef.key
+
+          switch (type) {
+            case 'string':
+              variableObj[key] = instance.getFeatureVariableString(
+                featureKey,
+                key,
+                userId,
+                attributes,
+              )
+              break
+
+            case 'boolean':
+              variableObj[key] = instance.getFeatureVariableBoolean(
+                featureKey,
+                key,
+                userId,
+                attributes,
+              )
+              break
+
+            case 'integer':
+              variableObj[key] = instance.getFeatureVariableInteger(
+                featureKey,
+                key,
+                userId,
+                attributes,
+              )
+              break
+
+            case 'double':
+              variableObj[key] = instance.getFeatureVariableDouble(
+                featureKey,
+                key,
+                userId,
+                attributes,
+              )
+              break
+          }
+        })
+      } catch (e) {}
+
+      return variableObj
     },
 
     getFeatureVariableInteger(

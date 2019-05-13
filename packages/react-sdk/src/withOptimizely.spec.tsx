@@ -26,7 +26,7 @@ Enzyme.configure({ adapter: new Adapter() })
 
 import { mount } from 'enzyme'
 import { OptimizelyProvider } from './Provider'
-import { OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
+import * as optimizely from '@optimizely/optimizely-sdk'
 import { withOptimizely } from './withOptimizely'
 import { UserWrappedOptimizelySDK, createUserWrapper } from './createUserWrapper'
 
@@ -64,7 +64,7 @@ describe('withOptimizely', () => {
   })
 
   it('should inject optimizely and optimizelyReadyTiemout from <OptimizelyProvider>', async () => {
-    const optimizelyMock = ({} as unknown) as OptimizelyClientWrapper
+    const optimizelyMock = ({} as unknown) as optimizely.Client
 
     const component = mount(
       <OptimizelyProvider
@@ -92,7 +92,7 @@ describe('withOptimizely', () => {
   })
 
   it('should inject the isServerSide prop', async () => {
-    const optimizelyMock = ({} as unknown) as OptimizelyClientWrapper
+    const optimizelyMock = ({} as unknown) as optimizely.Client
 
     const component = mount(
       <OptimizelyProvider

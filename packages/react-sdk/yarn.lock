@@ -18,22 +18,49 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@optimizely/js-web-sdk@3.0.0-beta1":
-  version "3.0.0-beta1"
-  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/js-web-sdk/-/@optimizely/js-web-sdk-3.0.0-beta1.tgz#334b52b1b98a9f044748461bd1fb4fb8c7bc81aa"
-  integrity sha1-M0tSsbmKnwRHSEYb0ftPuMe8gao=
+"@optimizely/js-sdk-datafile-manager@^0.2.0":
+  version "0.2.0"
+  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/js-sdk-datafile-manager/-/@optimizely/js-sdk-datafile-manager-0.2.0.tgz#af43ab3d4cee55a5ad7eabcaa52fbb352f1949c1"
+  integrity sha1-r0OrPUzuVaWtfqvKpS+7NS8ZScE=
   dependencies:
-    "@optimizely/optimizely-sdk" "3.0.0-rc2"
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/js-sdk-utils" "^0.1.0"
 
-"@optimizely/optimizely-sdk@3.0.0-rc2":
-  version "3.0.0-rc2"
-  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/optimizely-sdk/-/@optimizely/optimizely-sdk-3.0.0-rc2.tgz#0ef0074903ce69747de2e53d241b57619f4f2d5b"
-  integrity sha1-DvAHSQPOaXR94uU9JBtXYZ9PLVs=
+"@optimizely/js-sdk-event-processor@^0.2.0":
+  version "0.2.0"
+  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/js-sdk-event-processor/-/@optimizely/js-sdk-event-processor-0.2.0.tgz#6cde96005fd06c23a10bfd5254b0409ce80f3339"
+  integrity sha1-bN6WAF/QbCOhC/1SVLBAnOgPMzk=
   dependencies:
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/js-sdk-utils" "^0.1.0"
+
+"@optimizely/js-sdk-logging@^0.1.0":
+  version "0.1.0"
+  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/js-sdk-logging/-/@optimizely/js-sdk-logging-0.1.0.tgz#4a2845dc70e3b2cc535e45cda8c5c7cfdbae12d2"
+  integrity sha1-SihF3HDjssxTXkXNqMXHz9uuEtI=
+  dependencies:
+    "@optimizely/js-sdk-utils" "^0.1.0"
+
+"@optimizely/js-sdk-utils@^0.1.0":
+  version "0.1.0"
+  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/js-sdk-utils/-/@optimizely/js-sdk-utils-0.1.0.tgz#1688ea81290e4821ec37361d51b1551bea071099"
+  integrity sha1-FojqgSkOSCHsNzYdUbFVG+oHEJk=
+  dependencies:
+    uuid "^3.3.2"
+
+"@optimizely/optimizely-sdk@3.2.0-alpha":
+  version "3.2.0-alpha"
+  resolved "https://optimizely.jfrog.io/optimizely/api/npm/npm-local/@optimizely/optimizely-sdk/-/@optimizely/optimizely-sdk-3.2.0-alpha.tgz#ea6aafa2e99b1a6f9700c3fa98b4b89e1e9c5a30"
+  integrity sha1-6mqvoumbGm+XAMP6mLS4nh6cWjA=
+  dependencies:
+    "@optimizely/js-sdk-datafile-manager" "^0.2.0"
+    "@optimizely/js-sdk-event-processor" "^0.2.0"
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/js-sdk-utils" "^0.1.0"
     json-schema "^0.2.3"
     lodash "^4.0.0"
     murmurhash "0.0.2"
-    sprintf-js "^1.1.1"
+    promise-polyfill "8.1.0"
     uuid "^3.3.2"
 
 "@types/cheerio@*":
@@ -3130,6 +3157,11 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
   integrity sha512-MtEC1TqN0EU5nephaJ4rAtThHtC86dNN9qCuEhtshvpVBkAW5ZO7BASN9REnF9eoXGcRub+pFuKEpOHE+HbEMw==
 
+promise-polyfill@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/promise-polyfill/-/promise-polyfill-8.1.0.tgz#30059da54d1358ce905ac581f287e184aedf995d"
+  integrity sha512-OzSf6gcCUQ01byV4BgwyUCswlaQQ6gzXc23aLQWhicvfX9kfsUiUhgt3CCQej8jDnl8/PhGF31JdHX2/MzF3WA==
+
 prompts@^0.1.9:
   version "0.1.14"
   resolved "https://registry.yarnpkg.com/prompts/-/prompts-0.1.14.tgz#a8e15c612c5c9ec8f8111847df3337c9cbd443b2"
@@ -3740,11 +3772,6 @@ split-string@^3.0.1, split-string@^3.0.2:
   integrity sha512-NzNVhJDYpwceVVii8/Hu6DKfD2G+NrQHlS/V/qgv763EYudVwEcMQNxd2lh+0VrUByXN/oJkl5grOhYWvQUYiw==
   dependencies:
     extend-shallow "^3.0.0"
-
-sprintf-js@^1.1.1:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
-  integrity sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==
 
 sprintf-js@~1.0.2:
   version "1.0.3"

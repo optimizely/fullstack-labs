@@ -15,25 +15,64 @@
  */
 /// <reference types="jest" />
 
-import { OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
+// import { OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
+import * as optimizely from '@optimizely/optimizely-sdk'
 import { createUserWrapper } from './createUserWrapper'
 
 describe('createUserWrapper', () => {
-  let MockedOptimizelySDKWrapper: jest.Mock<OptimizelyClientWrapper>
+  let MockedOptimizelySDKWrapper: jest.Mock<optimizely.Client>
+  let mockedDatafileManager: any
 
   beforeEach(() => {
+    const configObj: any = {
+      featureKeyMap: {
+        featureKey: {
+          variables: [
+            {
+              key: 'variableKeyBoolean',
+              id: 'variableKeyBoolean',
+              defaultValue: false,
+              type: 'boolean',
+            },
+            {
+              key: 'variableKeyString',
+              id: 'variableKeyString',
+              defaultValue: 'default',
+              type: 'string',
+            },
+            {
+              key: 'variableKeyDouble',
+              id: 'variableKeyDouble',
+              defaultValue: 0,
+              type: 'double',
+            },
+            {
+              key: 'variableKeyInteger',
+              id: 'variableKeyInteger',
+              defaultValue: 0,
+              type: 'integer',
+            },
+          ],
+        },
+      },
+    }
+
+    mockedDatafileManager = {
+      getConfig: jest.fn().mockReturnValue(configObj),
+    }
+
     MockedOptimizelySDKWrapper = jest.fn(() => {
       return ({
+        projectConfigManager: mockedDatafileManager,
         activate: jest.fn().mockReturnValue('var1'),
         getVariation: jest.fn().mockReturnValue('var1'),
         isFeatureEnabled: jest.fn().mockReturnValue(true),
-        getFeatureVariables: jest.fn().mockReturnValue({ foo: 'bar' }),
         getFeatureVariableInteger: jest.fn().mockReturnValue(42),
         getFeatureVariableString: jest.fn().mockReturnValue('result'),
         getFeatureVariableBoolean: jest.fn().mockReturnValue(true),
         getFeatureVariableDouble: jest.fn().mockReturnValue(69),
         track: jest.fn(),
-      } as unknown) as OptimizelyClientWrapper
+      } as unknown) as optimizely.Client
     })
   })
 
@@ -147,8 +186,36 @@ describe('createUserWrapper', () => {
       })
 
       const result = wrapper.getFeatureVariables('featureKey')
-      expect(result).toEqual({ foo: 'bar' })
-      expect(instance.getFeatureVariables).toHaveBeenCalledWith('featureKey', userId, {})
+      expect(result).toEqual({
+        variableKeyBoolean: true,
+        variableKeyDouble: 69,
+        variableKeyInteger: 42,
+        variableKeyString: 'result',
+      })
+      expect(instance.getFeatureVariableBoolean).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyBoolean',
+        userId,
+        {},
+      )
+      expect(instance.getFeatureVariableInteger).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyInteger',
+        userId,
+        {},
+      )
+      expect(instance.getFeatureVariableDouble).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyDouble',
+        userId,
+        {},
+      )
+      expect(instance.getFeatureVariableString).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyString',
+        userId,
+        {},
+      )
     })
 
     it('should proxy with UserAttributes', () => {
@@ -164,12 +231,52 @@ describe('createUserWrapper', () => {
       })
 
       const result = wrapper.getFeatureVariables('featureKey')
-      expect(result).toEqual({ foo: 'bar' })
-      expect(instance.getFeatureVariables).toHaveBeenCalledWith(
+      expect(result).toEqual({
+        variableKeyBoolean: true,
+        variableKeyDouble: 69,
+        variableKeyInteger: 42,
+        variableKeyString: 'result',
+      })
+      expect(instance.getFeatureVariableBoolean).toHaveBeenCalledWith(
         'featureKey',
+        'variableKeyBoolean',
         userId,
         userAttributes,
       )
+      expect(instance.getFeatureVariableInteger).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyInteger',
+        userId,
+        userAttributes,
+      )
+      expect(instance.getFeatureVariableDouble).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyDouble',
+        userId,
+        userAttributes,
+      )
+      expect(instance.getFeatureVariableString).toHaveBeenCalledWith(
+        'featureKey',
+        'variableKeyString',
+        userId,
+        userAttributes,
+      )
+    })
+
+    it('should return an empty object when the feature isnt defined', () => {
+      const userId = 'james'
+      const userAttributes = {
+        plan: 'bronze',
+      }
+      const instance = new MockedOptimizelySDKWrapper()
+      const wrapper = createUserWrapper({
+        instance,
+        userId,
+        userAttributes,
+      })
+
+      const result = wrapper.getFeatureVariables('whackFeatureKey')
+      expect(result).toEqual({})
     })
   })
 
