@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 import * as React from 'react'
-import * as PropTypes from 'prop-types'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 import { VariableValuesObject } from './createUserWrapper'
 
@@ -31,8 +30,13 @@ export interface FeatureState {
 }
 
 class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
+  private optimizelyNotificationId?: number
+  private unregisterUserListener: () => void
+
   constructor(props: FeatureProps) {
     super(props)
+
+    this.unregisterUserListener = () => {}
 
     const { isServerSide, optimizely, feature } = props
     if (isServerSide) {
@@ -56,9 +60,13 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
   }
 
   componentDidMount() {
-    const { feature, optimizely, optimizelyReadyTimeout } = this.props
+    const { feature, optimizely, optimizelyReadyTimeout, isServerSide } = this.props
     if (optimizely === null) {
       throw new Error('optimizely prop must be supplied')
+    }
+
+    if (isServerSide) {
+      return
     }
 
     optimizely.onReady({ timeout: optimizelyReadyTimeout }).then(() => {
@@ -70,6 +78,41 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
         variables,
       })
     })
+
+    // TODO check if this can be called at the same time as onReady
+    this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
+      'OPTIMIZELY_CONFIG_UPDATE',
+      () => {
+        const isEnabled = optimizely.isFeatureEnabled(feature)
+        const variables = optimizely.getFeatureVariables(feature)
+        this.setState({
+          isEnabled,
+          variables,
+        })
+      },
+    )
+
+    this.unregisterUserListener = optimizely.onUserUpdate(() => {
+      const isEnabled = optimizely.isFeatureEnabled(feature)
+      const variables = optimizely.getFeatureVariables(feature)
+      this.setState({
+        isEnabled,
+        variables,
+      })
+    })
+  }
+
+  componentWillUnmount() {
+    const { optimizely, isServerSide } = this.props
+    if (isServerSide) {
+      return
+    }
+    if (optimizely && this.optimizelyNotificationId) {
+      optimizely.notificationCenter.removeNotificationListener(
+        this.optimizelyNotificationId,
+      )
+    }
+    this.unregisterUserListener()
   }
 
   render() {

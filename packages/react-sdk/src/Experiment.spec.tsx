@@ -23,7 +23,7 @@ import { Experiment, OptimizelyExperiment } from './Experiment'
 
 import { mount } from 'enzyme'
 import { OptimizelyProvider } from './Provider'
-import { OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
+import { ReactSDKClient } from './client'
 import { OptimizelyVariation } from './Variation'
 
 async function sleep(timeout = 0): Promise<{}> {
@@ -60,14 +60,17 @@ describe('<OptimizelyExperiment>', () => {
       const optimizelyMock = ({
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         activate: jest.fn().mockImplementation(experimentKey => variationKey),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
         <OptimizelyProvider
           optimizely={optimizelyMock}
           timeout={100}
-          userId="jordan"
-          userAttributes={{ plan_type: 'bronze' }}
         >
           <OptimizelyExperiment experiment="experiment1">
             {variation => variation}
@@ -82,9 +85,7 @@ describe('<OptimizelyExperiment>', () => {
 
       await sleep()
 
-      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1', 'jordan', {
-        plan_type: 'bronze',
-      })
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
       expect(component.text()).toBe(variationKey)
     })
 
@@ -101,10 +102,15 @@ describe('<OptimizelyExperiment>', () => {
       const optimizelyMock = ({
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         activate: jest.fn().mockImplementation(experimentKey => variationKey),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider optimizely={optimizelyMock} userId="jordan">
+        <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">
             <OptimizelyVariation variation="otherVariation">
               other variation
@@ -139,10 +145,15 @@ describe('<OptimizelyExperiment>', () => {
       const optimizelyMock = ({
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         activate: jest.fn().mockImplementation(experimentKey => variationKey),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider optimizely={optimizelyMock} userId="jordan">
+        <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">
             <OptimizelyVariation variation="otherVariation">
               other variation
@@ -174,10 +185,15 @@ describe('<OptimizelyExperiment>', () => {
       const optimizelyMock = ({
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         activate: jest.fn().mockImplementation(experimentKey => variationKey),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider optimizely={optimizelyMock} userId="jordan">
+        <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">
             <OptimizelyVariation variation="otherVariation">
               other variation
@@ -213,14 +229,17 @@ describe('<OptimizelyExperiment>', () => {
       const optimizelyMock = ({
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         activate: jest.fn().mockImplementation(experimentKey => variationKey),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
         <OptimizelyProvider
           optimizely={optimizelyMock}
           timeout={100}
-          userId="jordan"
-          userAttributes={{ plan_type: 'bronze' }}
           isServerSide={true}
         >
           <OptimizelyExperiment experiment="experiment1">
@@ -245,10 +264,15 @@ describe('<OptimizelyExperiment>', () => {
       const optimizelyMock = ({
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         activate: jest.fn().mockImplementation(experimentKey => variationKey),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider optimizely={optimizelyMock} userId="jordan" isServerSide={true}>
+        <OptimizelyProvider optimizely={optimizelyMock} isServerSide={true}>
           <OptimizelyExperiment experiment="experiment1">
             <OptimizelyVariation variation="otherVariation">
               other variation

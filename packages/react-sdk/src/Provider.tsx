@@ -16,18 +16,12 @@
 import * as React from 'react'
 
 import { OptimizelyContextProvider } from './Context'
-import * as optimizely from '@optimizely/optimizely-sdk'
-import {
-  UserAttributes,
-  createUserWrapper,
-  UserWrappedOptimizelySDK,
-} from './createUserWrapper'
+import { ReactSDKClient } from './client';
+import { UserAttributes } from './createUserWrapper';
 
 interface OptimizelyProviderProps {
-  optimizely: optimizely.Client
-  userId: string
+  optimizely: ReactSDKClient
   timeout?: number
-  userAttributes?: UserAttributes
   isServerSide?: boolean
 }
 
@@ -40,24 +34,17 @@ export class OptimizelyProvider extends React.Component<
   OptimizelyProviderProps,
   OptimizelyProviderState
 > {
-  sdkWrapper: UserWrappedOptimizelySDK
-
   constructor(props: OptimizelyProviderProps) {
     super(props)
 
-    const { optimizely, userId, userAttributes } = props
-    this.sdkWrapper = createUserWrapper({
-      instance: optimizely,
-      userId,
-      userAttributes,
-    })
+    const { optimizely } = props
   }
 
   render() {
-    const { children, timeout } = this.props
+    const { optimizely, children, timeout } = this.props
     const isServerSide = !!this.props.isServerSide
     const value = {
-      optimizely: this.sdkWrapper,
+      optimizely,
       isServerSide,
       timeout,
     }

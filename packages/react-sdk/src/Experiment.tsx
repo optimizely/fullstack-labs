@@ -16,7 +16,7 @@
 import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 import { VariationProps } from './Variation'
-import { VariableValuesObject } from './createUserWrapper';
+import { VariableValuesObject } from './createUserWrapper'
 
 export type ChildrenRenderFunction = (
   variableValues: VariableValuesObject,
@@ -36,8 +36,13 @@ export interface ExperimentState {
 }
 
 export class Experiment extends React.Component<ExperimentProps, ExperimentState> {
+  private optimizelyNotificationId?: number
+  private unregisterUserListener: () => void
+
   constructor(props: ExperimentProps) {
     super(props)
+
+    this.unregisterUserListener = () => {}
 
     const { isServerSide, optimizely, experiment } = props
 
@@ -59,9 +64,12 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
   }
 
   componentDidMount() {
-    const { experiment, optimizely, optimizelyReadyTimeout } = this.props
+    const { experiment, optimizely, optimizelyReadyTimeout, isServerSide } = this.props
     if (!optimizely) {
       throw new Error('optimizely prop must be supplied')
+    }
+    if (isServerSide) {
+      return
     }
 
     optimizely.onReady({ timeout: optimizelyReadyTimeout }).then(() => {
@@ -71,6 +79,36 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
         variation,
       })
     })
+
+    this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
+      'OPTIMIZELY_CONFIG_UPDATE',
+      () => {
+        const variation = optimizely.activate(experiment)
+        this.setState({
+          variation,
+        })
+      },
+    )
+
+    this.unregisterUserListener = optimizely.onUserUpdate(() => {
+      const variation = optimizely.activate(experiment)
+      this.setState({
+        variation,
+      })
+    })
+  }
+
+  componentWillUnmount() {
+    const { optimizely, isServerSide } = this.props
+    if (isServerSide) {
+      return
+    }
+    if (optimizely && this.optimizelyNotificationId) {
+      optimizely.notificationCenter.removeNotificationListener(
+        this.optimizelyNotificationId,
+      )
+    }
+    this.unregisterUserListener()
   }
 
   render() {

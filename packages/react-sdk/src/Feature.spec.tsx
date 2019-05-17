@@ -20,7 +20,7 @@ Enzyme.configure({ adapter: new Adapter() })
 
 import { mount } from 'enzyme'
 import { OptimizelyProvider } from './Provider'
-import { OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
+import { ReactSDKClient } from './client'
 import { OptimizelyFeature } from './Feature'
 
 async function sleep(timeout = 0): Promise<{}> {
@@ -61,10 +61,15 @@ describe('<OptimizelyFeature>', () => {
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         getFeatureVariables: jest.fn().mockImplementation(config => variables),
         isFeatureEnabled: jest.fn().mockImplementation(config => isEnabled),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider optimizely={optimizelyMock} userId="jordan">
+        <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyFeature feature="feature1">
             {(isEnabled, variables) =>
               `${isEnabled ? 'true' : 'false'}|${variables.foo}`
@@ -81,16 +86,8 @@ describe('<OptimizelyFeature>', () => {
 
       await sleep()
 
-      expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith(
-        'feature1',
-        'jordan',
-        {},
-      )
-      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith(
-        'feature1',
-        'jordan',
-        {},
-      )
+      expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
+      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
       expect(component.text()).toBe('true|bar')
     })
 
@@ -111,15 +108,15 @@ describe('<OptimizelyFeature>', () => {
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         getFeatureVariables: jest.fn().mockImplementation(config => variables),
         isFeatureEnabled: jest.fn().mockImplementation(config => isEnabled),
-      } as unknown) as OptimizelyClientWrapper
+        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+        notificationCenter: {
+          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+          removeNotificationListener: jest.fn().mockImplementation(id => {}),
+        },
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider
-          optimizely={optimizelyMock}
-          timeout={200}
-          userId="jordan"
-          userAttributes={{ plan_type: 'bronze' }}
-        >
+        <OptimizelyProvider optimizely={optimizelyMock} timeout={200}>
           <OptimizelyFeature feature="feature1">
             {(isEnabled, variables) =>
               `${isEnabled ? 'true' : 'false'}|${variables.foo}`
@@ -136,18 +133,8 @@ describe('<OptimizelyFeature>', () => {
 
       await sleep()
 
-      expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith(
-        'feature1',
-        'jordan',
-        {
-          plan_type: 'bronze',
-        },
-      )
-      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith(
-        'feature1',
-        'jordan',
-        { plan_type: 'bronze' },
-      )
+      expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
+      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
       expect(component.text()).toBe('true|bar')
     })
   })
@@ -163,10 +150,10 @@ describe('<OptimizelyFeature>', () => {
         onReady: jest.fn().mockImplementation(config => onReadyPromise),
         getFeatureVariables: jest.fn().mockImplementation(config => variables),
         isFeatureEnabled: jest.fn().mockImplementation(config => isEnabled),
-      } as unknown) as OptimizelyClientWrapper
+      } as unknown) as ReactSDKClient
 
       const component = mount(
-        <OptimizelyProvider optimizely={optimizelyMock} userId="jordan" isServerSide={true}>
+        <OptimizelyProvider optimizely={optimizelyMock} isServerSide={true}>
           <OptimizelyFeature feature="feature1">
             {(isEnabled, variables) =>
               `${isEnabled ? 'true' : 'false'}|${variables.foo}`
@@ -178,5 +165,4 @@ describe('<OptimizelyFeature>', () => {
       expect(component.text()).toBe('true|bar')
     })
   })
-
 })

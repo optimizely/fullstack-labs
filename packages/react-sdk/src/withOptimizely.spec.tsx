@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 /// <reference types="jest" />
-jest.mock('./createUserWrapper', () => ({
-  __esModule: true,
-  createUserWrapper: jest.fn(),
-}))
 
 import * as React from 'react'
 import * as Enzyme from 'enzyme'
@@ -28,7 +24,7 @@ import { mount } from 'enzyme'
 import { OptimizelyProvider } from './Provider'
 import * as optimizely from '@optimizely/optimizely-sdk'
 import { withOptimizely } from './withOptimizely'
-import { UserWrappedOptimizelySDK, createUserWrapper } from './createUserWrapper'
+import { ReactSDKClient } from './client'
 
 async function sleep(timeout = 0): Promise<{}> {
   return new Promise(resolve => {
@@ -39,7 +35,7 @@ async function sleep(timeout = 0): Promise<{}> {
 }
 
 type TestProps = {
-  optimizely: UserWrappedOptimizelySDK
+  optimizely: ReactSDKClient
   optimizelyReadyTimeout: number | undefined
   isServerSide: boolean
 }
@@ -57,10 +53,9 @@ class InnerComponent extends React.Component<TestProps, any> {
 const WrapperComponent = withOptimizely(InnerComponent)
 
 describe('withOptimizely', () => {
-  let wrappedOptimizely: UserWrappedOptimizelySDK
+  let wrappedOptimizely: ReactSDKClient
   beforeEach(() => {
-    wrappedOptimizely = {} as UserWrappedOptimizelySDK
-    ;(createUserWrapper as jest.Mock).mockReturnValue(wrappedOptimizely)
+    wrappedOptimizely = {} as ReactSDKClient
   })
 
   it('should inject optimizely and optimizelyReadyTiemout from <OptimizelyProvider>', async () => {
@@ -68,20 +63,12 @@ describe('withOptimizely', () => {
 
     const component = mount(
       <OptimizelyProvider
-        optimizely={optimizelyMock}
+        optimizely={wrappedOptimizely}
         timeout={200}
-        userId="jordan"
-        userAttributes={{ plan_type: 'bronze' }}
       >
         <WrapperComponent />
       </OptimizelyProvider>,
     )
-
-    expect(createUserWrapper).toHaveBeenCalledWith({
-      instance: optimizelyMock,
-      userId: 'jordan',
-      userAttributes: { plan_type: 'bronze' },
-    })
 
     const innerComponent = component.find(InnerComponent)
     expect(innerComponent.props()).toEqual({
@@ -96,10 +83,8 @@ describe('withOptimizely', () => {
 
     const component = mount(
       <OptimizelyProvider
-        optimizely={optimizelyMock}
+        optimizely={wrappedOptimizely}
         timeout={200}
-        userId="jordan"
-        userAttributes={{ plan_type: 'bronze' }}
         isServerSide={true}
       >
         <WrapperComponent />
