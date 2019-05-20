@@ -139,12 +139,13 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
 
   onReady(config: { timeout?: number } = {}): Promise<any> {
     let timeoutId: number | undefined
+    let timeout: number = DEFAULT_ON_READY_TIMEOUT
+    if (config && config.timeout !== undefined) {
+      timeout = config.timeout
+    }
 
     const timeoutPromise = new Promise(resolve => {
-      timeoutId = setTimeout(
-        () => resolve(),
-        config.timeout || DEFAULT_ON_READY_TIMEOUT,
-      ) as any
+      timeoutId = setTimeout(() => resolve(), timeout) as any
     })
 
     timeoutPromise.then(() => {
