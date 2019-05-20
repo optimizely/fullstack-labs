@@ -17,6 +17,9 @@ import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 import { VariationProps } from './Variation'
 import { VariableValuesObject } from './client'
+import * as logging from '@optimizely/js-sdk-logging'
+
+const logger = logging.getLogger('ReactSDK')
 
 export type ChildrenRenderFunction = (
   variableValues: VariableValuesObject,

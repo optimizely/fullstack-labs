@@ -1,5 +1,7 @@
 import * as optimizely from '@optimizely/optimizely-sdk'
+import * as logging from '@optimizely/js-sdk-logging'
 
+const logger = logging.getLogger('ReactSDK')
 export type VariableValuesObject = {
   [key: string]: boolean | number | string | null
 }
@@ -125,31 +127,33 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       this.userPromiseResovler = resolve
     })
 
-    // @ts-ignore
-    this.client.onReady({ timeout: 0 }).then(() => {
-      console.log('on ready fulfilled')
-    })
-
     this.dataReadyPromise = Promise.all([
       this.userPromise,
       // TODO fix when index.d.ts is updated
       // @ts-ignore
       this.client.onReady(),
-    ])
+    ]).then(() => {
+      logger.info('datafile promise fulfilled')
+    })
   }
 
   onReady(config: { timeout?: number } = {}): Promise<any> {
     let timeoutId: number | undefined
 
-    return Promise.race([
-      this.dataReadyPromise,
-      new Promise(resolve => {
-        timeoutId = setTimeout(
-          () => resolve(),
-          config.timeout || DEFAULT_ON_READY_TIMEOUT,
-        ) as any
-      }),
-    ]).then(() => {
+    const timeoutPromise = new Promise(resolve => {
+      timeoutId = setTimeout(
+        () => resolve(),
+        config.timeout || DEFAULT_ON_READY_TIMEOUT,
+      ) as any
+    })
+
+    timeoutPromise.then(() => {
+      logger.info(
+        'failed to initialize onReady before timeout, either the datafile or user info was not set before the set timeout',
+      )
+    })
+
+    return Promise.race([this.dataReadyPromise, timeoutPromise]).then(() => {
       clearTimeout(timeoutId)
     })
   }
@@ -199,9 +203,13 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       overrideAttributes,
     )
     if (userId === null) {
+      logger.info(
+        'Not activating experiment "%s" because userId is not set',
+        experimentKey,
+      )
       return null
     }
-    return this.client.getVariation(experimentKey, userId, userAttributes)
+    return this.client.activate(experimentKey, userId, userAttributes)
   }
 
   /**
@@ -223,6 +231,10 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       overrideAttributes,
     )
     if (userId === null) {
+      logger.info(
+        'getVariation returned null for experiment "%s" because userId is not set',
+        experimentKey,
+      )
       return null
     }
     return this.client.getVariation(experimentKey, userId, userAttributes)
@@ -245,6 +257,10 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     )
 
     if (userId === null) {
+      logger.info(
+        'track for event "%s" not being sent because userId is not set',
+        eventKey,
+      )
       // TODO log
       return
     }
@@ -272,6 +288,10 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       overrideAttributes,
     )
     if (userId === null) {
+      logger.info(
+        'isFeatureEnabled returning false for feature "%s" because userId is not set',
+        feature,
+      )
       return false
     }
     return this.client.isFeatureEnabled(feature, userId, userAttributes)
@@ -296,6 +316,10 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       overrideAttributes,
     )
     if (userId === null) {
+      logger.info(
+        'getFeatureVariables returning `{}` for feature "%s" because userId is not set',
+        featureKey,
+      )
       return {}
     }
     let variableObj: { [key: string]: any } = {}

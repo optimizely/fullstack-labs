@@ -18,10 +18,10 @@
     esutils "^2.0.2"
     js-tokens "^4.0.0"
 
-"@optimizely/js-sdk-datafile-manager@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@optimizely/js-sdk-datafile-manager/-/js-sdk-datafile-manager-0.2.0.tgz#af43ab3d4cee55a5ad7eabcaa52fbb352f1949c1"
-  integrity sha512-+Coj+0MRWEDGAmYfaDgTyzCT2FmFH1iOIL6W/h2zjTPPAfJBYrtcYdVllRIM8cXXNRvO89jSHmi2uknt0KX2Eg==
+"@optimizely/js-sdk-datafile-manager@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@optimizely/js-sdk-datafile-manager/-/js-sdk-datafile-manager-0.3.0.tgz#f014b52e0460a7529ed34286c98740bfb7c44344"
+  integrity sha512-Jidj/T30Me8TdmPiAx3dGY7xan2eN/EFgmfCwxMXuLoxtHI1dAKAi5PvCOYNHzFUOadhl0WN9KBIFmZVrXsLAg==
   dependencies:
     "@optimizely/js-sdk-logging" "^0.1.0"
     "@optimizely/js-sdk-utils" "^0.1.0"
@@ -48,12 +48,12 @@
   dependencies:
     uuid "^3.3.2"
 
-"@optimizely/optimizely-sdk@3.2.0-alpha":
-  version "3.2.0-alpha"
-  resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.2.0-alpha.tgz#fe06804a062bf4327bd404e5d61159b4d99254b6"
-  integrity sha512-rW7kG2WRz2izPPfKihpU1tsbGxE/k9P4px1E3HrDNiUBf4ZzOBZzZ3XhusHeKS15A6Cqpw4b4G8LYG43s03Kzg==
+"@optimizely/optimizely-sdk@>=3.2":
+  version "3.2.0-beta"
+  resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.2.0-beta.tgz#48fb01bbb957a77e6edb9ed851e3688fb0fccfce"
+  integrity sha512-ePpVpZ7/O2pRh9XHSLnkAnq/tFlZWy6gC4WB90IEHk0A9iZfMVAdGSW5mV7A+yEZ9EoARS3Go+a/NwYDWiX4SA==
   dependencies:
-    "@optimizely/js-sdk-datafile-manager" "^0.2.0"
+    "@optimizely/js-sdk-datafile-manager" "^0.3.0"
     "@optimizely/js-sdk-event-processor" "^0.2.0"
     "@optimizely/js-sdk-logging" "^0.1.0"
     "@optimizely/js-sdk-utils" "^0.1.0"
