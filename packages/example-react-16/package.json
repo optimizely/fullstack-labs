@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@optimizely/js-web-sdk": "^3.0.1-beta1",
-    "@optimizely/react-sdk": "^0.2.0-beta1",
+    "@optimizely/react-sdk": "^0.3.0-beta1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.3"
