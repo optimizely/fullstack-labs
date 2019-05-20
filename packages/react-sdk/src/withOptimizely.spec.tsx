@@ -53,37 +53,140 @@ class InnerComponent extends React.Component<TestProps, any> {
 const WrapperComponent = withOptimizely(InnerComponent)
 
 describe('withOptimizely', () => {
-  let wrappedOptimizely: ReactSDKClient
+  let optimizelyClient: ReactSDKClient
   beforeEach(() => {
-    wrappedOptimizely = {} as ReactSDKClient
+    optimizelyClient = ({
+      setUser: jest.fn(),
+    } as unknown) as ReactSDKClient
   })
 
-  it('should inject optimizely and optimizelyReadyTiemout from <OptimizelyProvider>', async () => {
-    const optimizelyMock = ({} as unknown) as optimizely.Client
+  describe('when userId / userAttributes props are provided', () => {
+    it('should call setUser with the correct user id / attributes', () => {
+      const attributes = {
+        foo: 'bar',
+      }
+      const userId = 'jordan'
+      const component = mount(
+        <OptimizelyProvider
+          optimizely={optimizelyClient}
+          timeout={200}
+          userId={userId}
+          userAttributes={attributes}
+        >
+          <WrapperComponent />
+        </OptimizelyProvider>,
+      )
 
+      expect(optimizelyClient.setUser).toHaveBeenCalledTimes(1)
+      expect(optimizelyClient.setUser).toHaveBeenCalledWith({ id: userId, attributes })
+    })
+  })
+
+  describe('when only userId prop is provided', () => {
+    it('should call setUser with the correct user id / attributes', () => {
+      const userId = 'jordan'
+      const component = mount(
+        <OptimizelyProvider optimizely={optimizelyClient} timeout={200} userId={userId}>
+          <WrapperComponent />
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyClient.setUser).toHaveBeenCalledTimes(1)
+      expect(optimizelyClient.setUser).toHaveBeenCalledWith({
+        id: userId,
+        attributes: {},
+      })
+    })
+  })
+
+  describe(`when the user prop is passed only with "id"`, () => {
+    it('should call setUser with the correct user id / attributes', () => {
+      const userId = 'jordan'
+      const component = mount(
+        <OptimizelyProvider
+          optimizely={optimizelyClient}
+          timeout={200}
+          user={{ id: userId }}
+        >
+          <WrapperComponent />
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyClient.setUser).toHaveBeenCalledTimes(1)
+      expect(optimizelyClient.setUser).toHaveBeenCalledWith({
+        id: userId,
+        attributes: {},
+      })
+    })
+  })
+
+  describe(`when the user prop is passed with "id" and "attributes"`, () => {
+    it('should call setUser with the correct user id / attributes', () => {
+      const userId = 'jordan'
+      const attributes = { foo: 'bar' }
+      const component = mount(
+        <OptimizelyProvider
+          optimizely={optimizelyClient}
+          timeout={200}
+          user={{ id: userId, attributes }}
+        >
+          <WrapperComponent />
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyClient.setUser).toHaveBeenCalledTimes(1)
+      expect(optimizelyClient.setUser).toHaveBeenCalledWith({
+        id: userId,
+        attributes,
+      })
+    })
+  })
+
+  describe('when both the user prop and userId / userAttributes props are passed', () => {
+    it('should respect the user object prop', () => {
+      const userId = 'jordan'
+      const attributes = { foo: 'bar' }
+      const component = mount(
+        <OptimizelyProvider
+          optimizely={optimizelyClient}
+          timeout={200}
+          user={{ id: userId, attributes }}
+          userId="otherUserId"
+          userAttributes={{ other: 'yo' }}
+        >
+          <WrapperComponent />
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyClient.setUser).toHaveBeenCalledTimes(1)
+      expect(optimizelyClient.setUser).toHaveBeenCalledWith({
+        id: userId,
+        attributes,
+      })
+    })
+  })
+
+  it('should inject optimizely and optimizelyReadyTimeout from <OptimizelyProvider>', async () => {
     const component = mount(
-      <OptimizelyProvider
-        optimizely={wrappedOptimizely}
-        timeout={200}
-      >
+      <OptimizelyProvider optimizely={optimizelyClient} timeout={200}>
         <WrapperComponent />
       </OptimizelyProvider>,
     )
 
     const innerComponent = component.find(InnerComponent)
     expect(innerComponent.props()).toEqual({
-      optimizely: wrappedOptimizely,
+      optimizely: optimizelyClient,
       isServerSide: false,
       optimizelyReadyTimeout: 200,
     })
+
+    expect(optimizelyClient.setUser).not.toHaveBeenCalled()
   })
 
   it('should inject the isServerSide prop', async () => {
-    const optimizelyMock = ({} as unknown) as optimizely.Client
-
     const component = mount(
       <OptimizelyProvider
-        optimizely={wrappedOptimizely}
+        optimizely={optimizelyClient}
         timeout={200}
         isServerSide={true}
       >
@@ -93,7 +196,7 @@ describe('withOptimizely', () => {
 
     const innerComponent = component.find(InnerComponent)
     expect(innerComponent.props()).toEqual({
-      optimizely: wrappedOptimizely,
+      optimizely: optimizelyClient,
       isServerSide: true,
       optimizelyReadyTimeout: 200,
     })

@@ -16,7 +16,7 @@
 import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 import { VariationProps } from './Variation'
-import { VariableValuesObject } from './createUserWrapper'
+import { VariableValuesObject } from './client'
 
 export type ChildrenRenderFunction = (
   variableValues: VariableValuesObject,

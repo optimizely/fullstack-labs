@@ -16,13 +16,18 @@
 import * as React from 'react'
 
 import { OptimizelyContextProvider } from './Context'
-import { ReactSDKClient } from './client';
-import { UserAttributes } from './createUserWrapper';
+import { ReactSDKClient, UserAttributes } from './client'
 
 interface OptimizelyProviderProps {
   optimizely: ReactSDKClient
   timeout?: number
   isServerSide?: boolean
+  user?: {
+    id: string
+    attributes?: UserAttributes
+  }
+  userId?: string
+  userAttributes?: UserAttributes
 }
 
 interface OptimizelyProviderState {
@@ -36,8 +41,32 @@ export class OptimizelyProvider extends React.Component<
 > {
   constructor(props: OptimizelyProviderProps) {
     super(props)
+    const { optimizely, userId, userAttributes, user } = props
 
-    const { optimizely } = props
+    // check if user id/attributes are provided as props and set them ReactSDKClient
+    let finalUser: {
+      id: string
+      attributes: UserAttributes
+    } | null = null
+    if (user) {
+      finalUser = {
+        id: user.id,
+        attributes: user.attributes || {},
+      }
+    } else if (userId) {
+      finalUser = {
+        id: userId,
+        attributes: userAttributes || {},
+      }
+      // deprecation warning
+      console.warn(
+        'Passing userId and userAttributes as props is deprecated, please switch to using `user` prop',
+      )
+    }
+
+    if (finalUser) {
+      optimizely.setUser(finalUser)
+    }
   }
 
   render() {

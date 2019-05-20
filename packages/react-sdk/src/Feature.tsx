@@ -15,7 +15,7 @@
  */
 import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
-import { VariableValuesObject } from './createUserWrapper'
+import { VariableValuesObject } from './client'
 
 export interface FeatureProps extends WithOptimizelyProps {
   // TODO add support for overrideUserId
@@ -79,7 +79,6 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
       })
     })
 
-    // TODO check if this can be called at the same time as onReady
     this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
       'OPTIMIZELY_CONFIG_UPDATE',
       () => {

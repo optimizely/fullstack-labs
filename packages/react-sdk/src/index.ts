@@ -13,9 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export { UserWrappedOptimizelySDK } from './createUserWrapper'
-export { OptimizelyProvider } from './Provider';
+export { OptimizelyProvider } from './Provider'
 export { OptimizelyFeature } from './Feature'
 export { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 export { OptimizelyExperiment } from './Experiment'
 export { OptimizelyVariation } from './Variation'
+
+export {
+// @ts-ignore
+  logging,
+// @ts-ignore
+  errorHandler,
+// @ts-ignore
+  setLogger,
+// @ts-ignore
+  setLogLevel,
+// @ts-ignore
+  enums,
+// @ts-ignore
+  eventDispatcher,
+} from '@optimizely/optimizely-sdk'
+export { createInstance, ReactSDKClient } from './client'
