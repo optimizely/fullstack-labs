@@ -40,8 +40,8 @@ export function withOptimizely<P extends WithOptimizelyProps>(
             // @ts-ignore
             <Component
               {...this.props}
-              optimizely={value.optimizely}
               optimizelyReadyTimeout={value.timeout}
+              optimizely={value.optimizely}
               isServerSide={value.isServerSide}
             />
           )}

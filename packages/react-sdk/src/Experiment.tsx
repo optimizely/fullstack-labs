@@ -27,6 +27,8 @@ type ChildRenderFunction = (variation: string | null) => React.ReactNode
 export interface ExperimentProps extends WithOptimizelyProps {
   // TODO add support for overrideUserId
   experiment: string
+  autoUpdate?: boolean
+  timeout?: number
   children: React.ReactNode | ChildRenderFunction
 }
 
@@ -38,13 +40,15 @@ export interface ExperimentState {
 export class Experiment extends React.Component<ExperimentProps, ExperimentState> {
   private optimizelyNotificationId?: number
   private unregisterUserListener: () => void
+  private autoUpdate: boolean = false
 
   constructor(props: ExperimentProps) {
     super(props)
 
     this.unregisterUserListener = () => {}
 
-    const { isServerSide, optimizely, experiment } = props
+    const { autoUpdate, isServerSide, optimizely, experiment } = props
+    this.autoUpdate = !!autoUpdate
 
     if (isServerSide) {
       if (optimizely === null) {
@@ -64,7 +68,13 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
   }
 
   componentDidMount() {
-    const { experiment, optimizely, optimizelyReadyTimeout, isServerSide } = this.props
+    const {
+      experiment,
+      optimizely,
+      optimizelyReadyTimeout,
+      isServerSide,
+      timeout,
+    } = this.props
     if (!optimizely) {
       throw new Error('optimizely prop must be supplied')
     }
@@ -72,13 +82,21 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
       return
     }
 
-    optimizely.onReady({ timeout: optimizelyReadyTimeout }).then(() => {
+    // allow overriding of the ready timeout via the `timeout` prop passed to <Experiment />
+    let finalReadyTimeout: number | undefined =
+      timeout !== undefined ? timeout : optimizelyReadyTimeout
+
+    optimizely.onReady({ timeout: finalReadyTimeout }).then(() => {
       const variation = optimizely.activate(experiment)
       this.setState({
         canRender: true,
         variation,
       })
     })
+
+    if (!this.autoUpdate) {
+      return
+    }
 
     this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
       'OPTIMIZELY_CONFIG_UPDATE',
@@ -100,7 +118,7 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
 
   componentWillUnmount() {
     const { optimizely, isServerSide } = this.props
-    if (isServerSide) {
+    if (isServerSide || !this.autoUpdate) {
       return
     }
     if (optimizely && this.optimizelyNotificationId) {

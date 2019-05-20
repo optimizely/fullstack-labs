@@ -32,6 +32,32 @@ async function sleep(timeout = 0): Promise<{}> {
 }
 
 describe('<OptimizelyFeature>', () => {
+  let resolver: any
+  let optimizelyMock: ReactSDKClient
+  const isEnabled = true
+  const featureVariables = {
+    foo: 'bar',
+  }
+
+  beforeEach(() => {
+    const onReadyPromise = new Promise((resolve, reject) => {
+      resolver = {
+        reject,
+        resolve,
+      }
+    })
+
+    optimizelyMock = ({
+      onReady: jest.fn().mockImplementation(config => onReadyPromise),
+      getFeatureVariables: jest.fn().mockImplementation(() => featureVariables),
+      isFeatureEnabled: jest.fn().mockImplementation(() => isEnabled),
+      onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+      notificationCenter: {
+        addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+        removeNotificationListener: jest.fn().mockImplementation(id => {}),
+      },
+    } as unknown) as ReactSDKClient
+  })
   it('throws an error when not rendered in the context of an OptimizelyProvider', () => {
     expect(() => {
       // @ts-ignore
@@ -45,29 +71,6 @@ describe('<OptimizelyFeature>', () => {
 
   describe('when the isServerSide prop is false', () => {
     it('should wait until onReady() is resolved then render result of isFeatureEnabled and getFeatureVariables', async () => {
-      let resolver: any
-      const isEnabled = true
-      const variables = {
-        foo: 'bar',
-      }
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        getFeatureVariables: jest.fn().mockImplementation(config => variables),
-        isFeatureEnabled: jest.fn().mockImplementation(config => isEnabled),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyFeature feature="feature1">
@@ -92,29 +95,6 @@ describe('<OptimizelyFeature>', () => {
     })
 
     it('should respect the timeout provided in <OptimizelyProvider>', async () => {
-      let resolver: any
-      const isEnabled = true
-      const variables = {
-        foo: 'bar',
-      }
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        getFeatureVariables: jest.fn().mockImplementation(config => variables),
-        isFeatureEnabled: jest.fn().mockImplementation(config => isEnabled),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock} timeout={200}>
           <OptimizelyFeature feature="feature1">
@@ -137,21 +117,120 @@ describe('<OptimizelyFeature>', () => {
       expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
       expect(component.text()).toBe('true|bar')
     })
+
+    it('should respect a locally passed timeout prop', async () => {
+      const component = mount(
+        <OptimizelyProvider optimizely={optimizelyMock} timeout={200}>
+          <OptimizelyFeature feature="feature1" timeout={100}>
+            {(isEnabled, variables) =>
+              `${isEnabled ? 'true' : 'false'}|${variables.foo}`
+            }
+          </OptimizelyFeature>
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
+
+      // while it's waiting for onReady()
+      expect(component.text()).toBe(null)
+      resolver.resolve()
+
+      await sleep()
+
+      expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
+      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
+      expect(component.text()).toBe('true|bar')
+    })
+
+    describe(`when the "autoUpdate" prop is true`, () => {
+      it('should update when the OPTIMIZELY_CONFIG_UPDATE handler is called', async () => {
+        const component = mount(
+          <OptimizelyProvider optimizely={optimizelyMock} timeout={200}>
+            <OptimizelyFeature feature="feature1" autoUpdate={true}>
+              {(isEnabled, variables) =>
+                `${isEnabled ? 'true' : 'false'}|${variables.foo}`
+              }
+            </OptimizelyFeature>
+          </OptimizelyProvider>,
+        )
+
+        expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
+
+        // while it's waiting for onReady()
+        expect(component.text()).toBe(null)
+        resolver.resolve()
+
+        await sleep()
+
+        expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
+        expect(component.text()).toBe('true|bar')
+
+        const updateFn = (optimizelyMock.notificationCenter
+            .addNotificationListener as jest.Mock).mock.calls[0][1]
+          // change the return value of activate
+        ;(optimizelyMock.isFeatureEnabled as jest.Mock).mockImplementationOnce(
+          () => false,
+        )
+        ;(optimizelyMock.getFeatureVariables as jest.Mock).mockImplementationOnce(
+          () => ({
+            foo: 'baz',
+          }),
+        )
+
+        updateFn()
+
+        expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledTimes(2)
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledTimes(2)
+
+        expect(component.text()).toBe('false|baz')
+      })
+
+      it('should update when the user changes', async () => {
+        const component = mount(
+          <OptimizelyProvider optimizely={optimizelyMock} timeout={200}>
+            <OptimizelyFeature feature="feature1" autoUpdate={true}>
+              {(isEnabled, variables) =>
+                `${isEnabled ? 'true' : 'false'}|${variables.foo}`
+              }
+            </OptimizelyFeature>
+          </OptimizelyProvider>,
+        )
+
+        expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
+
+        // while it's waiting for onReady()
+        expect(component.text()).toBe(null)
+        resolver.resolve()
+
+        await sleep()
+
+        expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
+        expect(component.text()).toBe('true|bar')
+
+        const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock.calls[0][0]
+        ;(optimizelyMock.isFeatureEnabled as jest.Mock).mockImplementationOnce(
+          () => false,
+        )
+        ;(optimizelyMock.getFeatureVariables as jest.Mock).mockImplementationOnce(
+          () => ({
+            foo: 'baz',
+          }),
+        )
+
+        updateFn()
+
+        expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledTimes(2)
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledTimes(2)
+
+        expect(component.text()).toBe('false|baz')
+      })
+    })
   })
 
   describe('when the isServerSide prop is true', () => {
     it('should immediately render the result of isFeatureEnabled and getFeatureVariables', async () => {
-      const isEnabled = true
-      const variables = {
-        foo: 'bar',
-      }
-      const onReadyPromise = new Promise((resolve, reject) => {})
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        getFeatureVariables: jest.fn().mockImplementation(config => variables),
-        isFeatureEnabled: jest.fn().mockImplementation(config => isEnabled),
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock} isServerSide={true}>
           <OptimizelyFeature feature="feature1">

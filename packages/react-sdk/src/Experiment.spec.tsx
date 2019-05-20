@@ -35,6 +35,29 @@ async function sleep(timeout = 0): Promise<{}> {
 }
 
 describe('<OptimizelyExperiment>', () => {
+  const variationKey = 'variationResult'
+  let resolver: any
+  let optimizelyMock: ReactSDKClient
+
+  beforeEach(() => {
+    const onReadyPromise = new Promise((resolve, reject) => {
+      resolver = {
+        reject,
+        resolve,
+      }
+    })
+
+    optimizelyMock = ({
+      onReady: jest.fn().mockImplementation(config => onReadyPromise),
+      activate: jest.fn().mockImplementation(experimentKey => variationKey),
+      onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
+      notificationCenter: {
+        addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
+        removeNotificationListener: jest.fn().mockImplementation(id => {}),
+      },
+    } as unknown) as ReactSDKClient
+  })
+
   it('throws an error when not rendered in the context of an OptimizelyProvider', () => {
     expect(() => {
       // @ts-ignore
@@ -48,30 +71,8 @@ describe('<OptimizelyExperiment>', () => {
 
   describe('when isServerSide prop is false', () => {
     it('should wait until onReady() is resolved then render result of activate', async () => {
-      let resolver: any
-      const variationKey = 'variationResult'
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        activate: jest.fn().mockImplementation(experimentKey => variationKey),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
-        <OptimizelyProvider
-          optimizely={optimizelyMock}
-          timeout={100}
-        >
+        <OptimizelyProvider optimizely={optimizelyMock} timeout={100}>
           <OptimizelyExperiment experiment="experiment1">
             {variation => variation}
           </OptimizelyExperiment>
@@ -89,26 +90,45 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe(variationKey)
     })
 
+    it('should allow timeout to be overrided', async () => {
+      const component = mount(
+        <OptimizelyProvider optimizely={optimizelyMock} timeout={100}>
+          <OptimizelyExperiment experiment="experiment1" timeout={200}>
+            {variation => variation}
+          </OptimizelyExperiment>
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
+      // while it's waiting for onReady()
+      expect(component.text()).toBe(null)
+      resolver.resolve()
+
+      await sleep()
+
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
+    })
+
+    it(`should use the Experiment prop's timeout when there is no timeout passed to <Provider>`, async () => {
+      const component = mount(
+        <OptimizelyProvider optimizely={optimizelyMock}>
+          <OptimizelyExperiment experiment="experiment1" timeout={200}>
+            {variation => variation}
+          </OptimizelyExperiment>
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
+      // while it's waiting for onReady()
+      expect(component.text()).toBe(null)
+      resolver.resolve()
+
+      await sleep()
+
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
+    })
+
     it('should render using <OptimizelyVariation> when the variationKey matches', async () => {
-      let resolver: any
-      const variationKey = 'variationResult'
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        activate: jest.fn().mockImplementation(experimentKey => variationKey),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">
@@ -133,25 +153,6 @@ describe('<OptimizelyExperiment>', () => {
     })
 
     it('should render using <OptimizelyVariation default>', async () => {
-      let resolver: any
-      const variationKey = 'variationResult'
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        activate: jest.fn().mockImplementation(experimentKey => variationKey),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">
@@ -173,25 +174,6 @@ describe('<OptimizelyExperiment>', () => {
     })
 
     it('should render null when no default or matching variation is provided', async () => {
-      let resolver: any
-      const variationKey = 'variationResult'
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        activate: jest.fn().mockImplementation(experimentKey => variationKey),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">
@@ -215,27 +197,79 @@ describe('<OptimizelyExperiment>', () => {
     })
   })
 
+  describe('when autoUpdate prop is true', () => {
+    it('should re-render when the OPTIMIZELY_CONFIG_UDPATE notification fires', async () => {
+      const component = mount(
+        <OptimizelyProvider optimizely={optimizelyMock} timeout={100}>
+          <OptimizelyExperiment experiment="experiment1" autoUpdate={true}>
+            {variation => variation}
+          </OptimizelyExperiment>
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
+      // while it's waiting for onReady()
+      expect(component.text()).toBe(null)
+      resolver.resolve()
+
+      await sleep()
+
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
+
+      expect(component.text()).toBe('variationResult')
+
+      // capture the OPTIMIZELY_CONFIG_UPDATE function
+      const updateFn = (optimizelyMock.notificationCenter
+          .addNotificationListener as jest.Mock).mock.calls[0][1]
+        // change the return value of activate
+      ;(optimizelyMock.activate as jest.Mock).mockImplementationOnce(
+        () => 'newVariation',
+      )
+
+      updateFn()
+      expect(optimizelyMock.activate).toBeCalledTimes(2)
+
+      await sleep()
+
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
+      expect(component.text()).toBe('newVariation')
+    })
+
+    it('should re-render when the user changes', async () => {
+      const component = mount(
+        <OptimizelyProvider optimizely={optimizelyMock} timeout={100}>
+          <OptimizelyExperiment experiment="experiment1" autoUpdate={true}>
+            {variation => variation}
+          </OptimizelyExperiment>
+        </OptimizelyProvider>,
+      )
+
+      expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
+      // while it's waiting for onReady()
+      expect(component.text()).toBe(null)
+      resolver.resolve()
+
+      await sleep()
+
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
+
+      expect(component.text()).toBe('variationResult')
+
+      // capture the onUserUpdate function
+      const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock
+        .calls[0][0]
+
+      ;(optimizelyMock.activate as jest.Mock).mockImplementationOnce(() => 'newVariation')
+      updateFn()
+      expect(optimizelyMock.activate).toBeCalledTimes(2)
+
+      expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
+      expect(component.text()).toBe('newVariation')
+    })
+  })
+
   describe('when the isServerSide prop is true', () => {
     it('should immediately render the result of the experiment without waiting', async () => {
-      let resolver: any
-      const variationKey = 'variationResult'
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        activate: jest.fn().mockImplementation(experimentKey => variationKey),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider
           optimizely={optimizelyMock}
@@ -252,25 +286,6 @@ describe('<OptimizelyExperiment>', () => {
     })
 
     it('should render using <OptimizelyVariation> when the variationKey matches', async () => {
-      let resolver: any
-      const variationKey = 'variationResult'
-      const onReadyPromise = new Promise((resolve, reject) => {
-        resolver = {
-          reject,
-          resolve,
-        }
-      })
-
-      const optimizelyMock = ({
-        onReady: jest.fn().mockImplementation(config => onReadyPromise),
-        activate: jest.fn().mockImplementation(experimentKey => variationKey),
-        onUserUpdate: jest.fn().mockImplementation(handler => () => {}),
-        notificationCenter: {
-          addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
-          removeNotificationListener: jest.fn().mockImplementation(id => {}),
-        },
-      } as unknown) as ReactSDKClient
-
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock} isServerSide={true}>
           <OptimizelyExperiment experiment="experiment1">

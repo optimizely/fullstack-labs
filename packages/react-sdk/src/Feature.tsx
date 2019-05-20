@@ -20,6 +20,8 @@ import { VariableValuesObject } from './client'
 export interface FeatureProps extends WithOptimizelyProps {
   // TODO add support for overrideUserId
   feature: string
+  timeout?: number
+  autoUpdate?: boolean
   children: (isEnabled: boolean, variables: VariableValuesObject) => React.ReactNode
 }
 
@@ -32,13 +34,15 @@ export interface FeatureState {
 class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
   private optimizelyNotificationId?: number
   private unregisterUserListener: () => void
+  private autoUpdate: boolean = false
 
   constructor(props: FeatureProps) {
     super(props)
 
     this.unregisterUserListener = () => {}
 
-    const { isServerSide, optimizely, feature } = props
+    const { autoUpdate, isServerSide, optimizely, feature } = props
+    this.autoUpdate = !!autoUpdate
     if (isServerSide) {
       if (optimizely === null) {
         throw new Error('optimizely prop must be supplied')
@@ -60,7 +64,13 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
   }
 
   componentDidMount() {
-    const { feature, optimizely, optimizelyReadyTimeout, isServerSide } = this.props
+    const {
+      feature,
+      optimizely,
+      optimizelyReadyTimeout,
+      isServerSide,
+      timeout,
+    } = this.props
     if (optimizely === null) {
       throw new Error('optimizely prop must be supplied')
     }
@@ -69,7 +79,11 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
       return
     }
 
-    optimizely.onReady({ timeout: optimizelyReadyTimeout }).then(() => {
+    // allow overriding of the ready timeout via the `timeout` prop passed to <Experiment />
+    let finalReadyTimeout: number | undefined =
+      timeout !== undefined ? timeout : optimizelyReadyTimeout
+
+    optimizely.onReady({ timeout: finalReadyTimeout }).then(() => {
       const isEnabled = optimizely.isFeatureEnabled(feature)
       const variables = optimizely.getFeatureVariables(feature)
       this.setState({
@@ -78,6 +92,10 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
         variables,
       })
     })
+
+    if (!this.autoUpdate) {
+      return
+    }
 
     this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
       'OPTIMIZELY_CONFIG_UPDATE',
@@ -103,7 +121,7 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
 
   componentWillUnmount() {
     const { optimizely, isServerSide } = this.props
-    if (isServerSide) {
+    if (isServerSide || !this.autoUpdate) {
       return
     }
     if (optimizely && this.optimizelyNotificationId) {
