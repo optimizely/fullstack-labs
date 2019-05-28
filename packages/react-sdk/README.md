@@ -73,8 +73,6 @@ class App extends React.Component {
 
 ```
 
-Note: `variables` is a [feature of Optimizely FullStack](https://docs.developers.optimizely.com/full-stack/docs/define-feature-variables) and is not available in Optimizely Rollouts.
-
 # Installation
 
 To use the `ReactSDK` components, you must use the [`@optimizely/js-web-sdk`](../js-web-sdk/), which is an API-compatible SDK wrapper built on top of the existing `@optimizely/javascript-sdk`. `@optimizely/js-web-sdk` adds API methods to enable better functionality (asynchronous loading and render blocking) with the ReactSDK.
@@ -191,7 +189,7 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 
 ```jsx
 <OptimizelyFeature feature="new-login-page">
-  {(isEnabled, variables) => (
+  {(isEnabled) => (
     <a href={isEnabled ? "/login" : "/login2"}>
       Login
     </a>
@@ -200,6 +198,8 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 ```
 
 ### Render feature variables
+
+`variables` provide additional configuration for a feature and is a [feature of Optimizely FullStack](https://docs.developers.optimizely.com/full-stack/docs/define-feature-variables). `variables` are not available in Optimizely Rollouts.
 
 ```jsx
 <OptimizelyFeature feature="new-login-page">
