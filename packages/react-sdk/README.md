@@ -209,6 +209,24 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 </OptimizelyFeature>
 ```
 
+### Rollout a feature user-by-user
+
+To rollout a feature by user rather than by random percentage, setup an attribute in Optimizely and create an Audience, which uses that attribute. Then pass along this attribute to the Provider.
+```
+  <OptimizelyProvider
+    optimizely={optimizely}
+    timeout={500}
+    userId={'user123'}     // UserId used for random percentage rollout 
+    userAttributes={{ 
+      user_id: 'user123'   // Attribute used for non-random audience rollout
+      plan_type: 'bronze',
+    }}
+  >
+```
+
+See the documentation to [run a beta](https://docs.developers.optimizely.com/rollouts/docs/run-a-beta).
+
+
 ### Programmatic access inside component
 
 Any component under the `<OptimizelyProvider>` can access the Optimizely `js-web-sdk` via the higher-order component (HoC) `withOptimizely`.
