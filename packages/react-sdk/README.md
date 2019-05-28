@@ -189,7 +189,7 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 
 ```jsx
 <OptimizelyFeature feature="new-login-page">
-  {(isEnabled, variables) => (
+  {(isEnabled) => (
     <a href={isEnabled ? "/login" : "/login2"}>
       Login
     </a>
@@ -198,6 +198,8 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 ```
 
 ### Render feature variables
+
+`variables` provide additional configuration for a feature and is a [feature of Optimizely FullStack](https://docs.developers.optimizely.com/full-stack/docs/define-feature-variables). `variables` are not available in Optimizely Rollouts.
 
 ```jsx
 <OptimizelyFeature feature="new-login-page">
