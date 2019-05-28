@@ -209,9 +209,9 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 </OptimizelyFeature>
 ```
 
-### Rollout a feature user-by-user
+### Rollout or experiment a feature user-by-user
 
-To rollout a feature by user rather than by random percentage, setup an attribute in Optimizely and create an Audience, which uses that attribute. Then pass along this attribute to the Provider.
+To rollout or experiment on a feature by user rather than by random percentage, setup an attribute in Optimizely and create an Audience, which uses that attribute. Then pass along this attribute to the Provider.
 ```
   <OptimizelyProvider
     optimizely={optimizely}
@@ -224,7 +224,7 @@ To rollout a feature by user rather than by random percentage, setup an attribut
   >
 ```
 
-See the documentation to [run a beta](https://docs.developers.optimizely.com/rollouts/docs/run-a-beta).
+This kind of targeted rollout or experiment is used when running a beta. For more information see the documentation on how to [run a beta](https://docs.developers.optimizely.com/rollouts/docs/run-a-beta).
 
 
 ### Programmatic access inside component
