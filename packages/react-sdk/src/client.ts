@@ -22,6 +22,8 @@ type DisposeFn = () => void
 type OnUserUpdateHandler = (userInfo: UserInfo) => void
 
 export interface ReactSDKClient extends optimizely.Client {
+  user: UserInfo
+
   onReady(opts?: { timeout?: number }): Promise<any>
   setUser(userInfo: { id: string; userAttributes?: { [key: string]: any } }): void
   onUserUpdate(handler: OnUserUpdateHandler): DisposeFn
