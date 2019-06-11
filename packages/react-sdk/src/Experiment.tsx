@@ -16,10 +16,10 @@
 import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
 import { VariationProps } from './Variation'
-import { VariableValuesObject } from './client'
+import { VariableValuesObject, OnReadyResult, DEFAULT_ON_READY_TIMEOUT } from './client'
 import * as logging from '@optimizely/js-sdk-logging'
 
-const logger = logging.getLogger('ReactSDK')
+const logger = logging.getLogger('<OptimizelyExperiment>')
 
 export type ChildrenRenderFunction = (
   variableValues: VariableValuesObject,
@@ -42,13 +42,11 @@ export interface ExperimentState {
 
 export class Experiment extends React.Component<ExperimentProps, ExperimentState> {
   private optimizelyNotificationId?: number
-  private unregisterUserListener: () => void
+  private unregisterUserListener: () => void = () => {}
   private autoUpdate: boolean = false
 
   constructor(props: ExperimentProps) {
     super(props)
-
-    this.unregisterUserListener = () => {}
 
     const { autoUpdate, isServerSide, optimizely, experiment } = props
     this.autoUpdate = !!autoUpdate
@@ -89,21 +87,43 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
     let finalReadyTimeout: number | undefined =
       timeout !== undefined ? timeout : optimizelyReadyTimeout
 
-    optimizely.onReady({ timeout: finalReadyTimeout }).then(() => {
+    optimizely.onReady({ timeout: finalReadyTimeout }).then((res: OnReadyResult) => {
+      if (res.success) {
+        logger.info('experiment="%s" successfully rendered for user="%s"', experiment, optimizely.user.id)
+      } else {
+        logger.info(
+          'experiment="%s" could not be checked before timeout of %sms, reason="%s" ',
+          experiment,
+          timeout === undefined ? DEFAULT_ON_READY_TIMEOUT : timeout,
+          res.reason || '',
+        )
+      }
+
       const variation = optimizely.activate(experiment)
       this.setState({
         canRender: true,
         variation,
       })
+      if (this.autoUpdate) {
+        this.setupAutoUpdateListeners()
+      }
     })
+  }
 
-    if (!this.autoUpdate) {
+  setupAutoUpdateListeners() {
+    const { optimizely, experiment } = this.props
+    if (optimizely === null) {
       return
     }
 
     this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
       'OPTIMIZELY_CONFIG_UPDATE',
       () => {
+        logger.info(
+          'OPTIMIZELY_CONFIG_UPDATE, re-evaluating experiment="%s" for user="%s"',
+          experiment,
+          optimizely.user.id,
+        )
         const variation = optimizely.activate(experiment)
         this.setState({
           variation,
@@ -112,6 +132,11 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
     )
 
     this.unregisterUserListener = optimizely.onUserUpdate(() => {
+      logger.info(
+        'OPTIMIZELY_CONFIG_UPDATE, re-evaluating experiment="%s" for user="%s"',
+        experiment,
+        optimizely.user.id,
+      )
       const variation = optimizely.activate(experiment)
       this.setState({
         variation,

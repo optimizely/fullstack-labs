@@ -20,17 +20,12 @@ export { OptimizelyExperiment } from './Experiment'
 export { OptimizelyVariation } from './Variation'
 
 export {
-// @ts-ignore
   logging,
-// @ts-ignore
   errorHandler,
-// @ts-ignore
   setLogger,
-// @ts-ignore
   setLogLevel,
-// @ts-ignore
   enums,
-// @ts-ignore
   eventDispatcher,
 } from '@optimizely/optimizely-sdk'
+
 export { createInstance, ReactSDKClient } from './client'

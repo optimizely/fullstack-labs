@@ -15,10 +15,11 @@ function getExternals(externals) {
 
 function getPlugins(env) {
   const plugins = [
+    resolve(),
     commonjs({
       include: /node_modules/,
+      namedExports: { '@optimizely/js-sdk-logging': ['getLogger'] },
     }),
-    resolve(),
   ]
 
   if (env) {

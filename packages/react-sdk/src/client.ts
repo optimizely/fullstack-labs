@@ -10,16 +10,14 @@ export type UserAttributes = { [attribute: string]: any }
 
 type EventTags = { [tagKey: string]: boolean | number | string }
 
-type TrackEventCallArgs = [
-  string,
-  string,
-  UserAttributes | undefined,
-  optimizely.EventTags | undefined
-]
-
 type DisposeFn = () => void
 
 type OnUserUpdateHandler = (userInfo: UserInfo) => void
+
+export type OnReadyResult = {
+  success: boolean
+  reason?: string
+}
 
 export interface ReactSDKClient extends optimizely.Client {
   user: UserInfo
@@ -93,7 +91,7 @@ type UserInfo = {
   attributes: UserAttributes
 }
 
-const DEFAULT_ON_READY_TIMEOUT = 5000
+export const DEFAULT_ON_READY_TIMEOUT = 5000
 
 class OptimizelyReactSDKClient implements ReactSDKClient {
   public initialConfig: optimizely.Config
@@ -104,14 +102,14 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   public notificationCenter: optimizely.NotificationCenter
 
   private userPromiseResovler: (user: UserInfo) => void
-  private userPromise: Promise<any>
+  private userPromise: Promise<OnReadyResult>
   private isUserPromiseResolved: boolean = false
   private onUserUpdateHandlers: OnUserUpdateHandler[] = []
 
   protected client: optimizely.Client
 
   // promise keeping track of async requests for initializing client instance
-  private dataReadyPromise: Promise<any>
+  private dataReadyPromise: Promise<OnReadyResult>
 
   /**
    * Creates an instance of OptimizelySDKWrapper.
@@ -127,37 +125,39 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
 
     this.userPromise = new Promise(resolve => {
       this.userPromiseResovler = resolve
-    })
+    }).then(() => ({ success: true }))
 
     this.dataReadyPromise = Promise.all([
       this.userPromise,
-      // TODO fix when index.d.ts is updated
-      // @ts-ignore
       this.client.onReady(),
     ]).then(() => {
-      logger.info('datafile promise fulfilled')
+      return {
+        success: true,
+        reason: "datafile and user resolved"
+      }
     })
   }
 
-  onReady(config: { timeout?: number } = {}): Promise<any> {
+  onReady(config: { timeout?: number } = {}): Promise<OnReadyResult> {
     let timeoutId: number | undefined
     let timeout: number = DEFAULT_ON_READY_TIMEOUT
     if (config && config.timeout !== undefined) {
       timeout = config.timeout
     }
 
-    const timeoutPromise = new Promise(resolve => {
-      timeoutId = setTimeout(() => resolve(), timeout) as any
+    const timeoutPromise = new Promise<OnReadyResult>(resolve => {
+      timeoutId = setTimeout(() => {
+        resolve({
+          success: false,
+          reason:
+            'failed to initialize onReady before timeout, either the datafile or user info was not set before the timeout',
+        })
+      }, timeout) as any
     })
 
-    timeoutPromise.then(() => {
-      logger.info(
-        'failed to initialize onReady before timeout, either the datafile or user info was not set before the set timeout',
-      )
-    })
-
-    return Promise.race([this.dataReadyPromise, timeoutPromise]).then(() => {
+    return Promise.race([this.dataReadyPromise, timeoutPromise]).then(res => {
       clearTimeout(timeoutId)
+      return res
     })
   }
 
@@ -169,9 +169,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     if (userInfo.attributes) {
       this.user.attributes = userInfo.attributes
     }
-    if (this.isUserPromiseResolved) {
-      // emit notify event
-    } else {
+    if (!this.isUserPromiseResolved) {
       this.userPromiseResovler(this.user)
       this.isUserPromiseResolved = true
     }
@@ -545,7 +543,6 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   }
 
   public close() {
-    // @ts-ignore
     return this.client.close()
   }
 
