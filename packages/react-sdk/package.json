@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@optimizely/js-sdk-logging": "^0.1.0",
-    "@optimizely/optimizely-sdk": ">=3.2",
+    "@optimizely/optimizely-sdk": "~3.2.0",
     "prop-types": "^15.6.2",
     "react-broadcast": "0.7.1",
     "utility-types": "^2.1.0"
@@ -39,7 +39,6 @@
     "react": ">=15 || ^16"
   },
   "devDependencies": {
-    "@optimizely/optimizely-sdk": "3.2.0-alpha",
     "@types/enzyme": "^3.1.15",
     "@types/enzyme-adapter-react-16": "^1.0.3",
     "@types/jest": "^23.3.12",
