@@ -170,12 +170,12 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       this.user.attributes = userInfo.attributes
     }
     if (this.isUserPromiseResolved) {
-      this.onUserUpdateHandlers.forEach(handler => handler(this.user))
       // emit notify event
     } else {
       this.userPromiseResovler(this.user)
       this.isUserPromiseResolved = true
     }
+    this.onUserUpdateHandlers.forEach(handler => handler(this.user))
   }
 
   onUserUpdate(handler: OnUserUpdateHandler): DisposeFn {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 import * as React from 'react'
-import * as optimizely from '@optimizely/optimizely-sdk'
 
 import { OptimizelyContextProvider } from './Context'
 import { ReactSDKClient, UserAttributes, createInstance } from './client'
+import { areUsersEqual } from './utils';
 
 type UserInfo = {
   id: string
@@ -25,12 +25,12 @@ type UserInfo = {
 }
 
 interface OptimizelyProviderProps {
+  optimizely: ReactSDKClient
   timeout?: number
   isServerSide?: boolean
   user?: Promise<UserInfo> | UserInfo
   userId?: string
   userAttributes?: UserAttributes
-  options: optimizely.Config
 }
 
 interface OptimizelyProviderState {
@@ -42,13 +42,9 @@ export class OptimizelyProvider extends React.Component<
   OptimizelyProviderProps,
   OptimizelyProviderState
 > {
-  optimizely: ReactSDKClient
-
   constructor(props: OptimizelyProviderProps) {
     super(props)
-    const { userId, userAttributes, user, options } = props
-
-    let isUserPromise: boolean = false
+    const { optimizely, userId, userAttributes, user} = props
 
     // check if user id/attributes are provided as props and set them ReactSDKClient
     let finalUser: {
@@ -56,13 +52,10 @@ export class OptimizelyProvider extends React.Component<
       attributes: UserAttributes
     } | null = null
 
-    this.optimizely = createInstance(options)
-
     if (user) {
       if ('then' in user) {
-        isUserPromise = true
         user.then(user => {
-          this.optimizely.setUser(user)
+          optimizely.setUser(user)
         })
       } else {
         finalUser = {
@@ -79,45 +72,11 @@ export class OptimizelyProvider extends React.Component<
       console.warn(
         'Passing userId and userAttributes as props is deprecated, please switch to using `user` prop',
       )
-    } else {
-      throw new Error(
-        'Must supply "user" prop as `{ id, attributes }` or `Promise<{ id, attributes }>',
-      )
     }
 
     if (finalUser) {
-      this.optimizely.setUser(finalUser)
+      optimizely.setUser(finalUser)
     }
-  }
-
-  usersAreEqual(user1: Required<UserInfo>, user2: Required<UserInfo>) {
-    if (user1.id !== user2.id) {
-      return false
-    }
-
-    const user1keys = Object.keys(user1.attributes)
-    const user2keys = Object.keys(user2.attributes)
-    user1keys.sort()
-    user2keys.sort()
-
-    const areKeysLenEqual = user1keys.length === user2keys.length
-    if (!areKeysLenEqual) {
-      return false
-    }
-
-    for (let i = 0; i < user1keys.length; i++) {
-      const key1 = user1keys[i]
-      const key2 = user2keys[i]
-      if (key1 !== key2) {
-        return false
-      }
-
-      if (user1.attributes[key1] !== user2.attributes[key2]) {
-        return false
-      }
-    }
-
-    return true
   }
 
   componentDidUpdate(prevProps: OptimizelyProviderProps): void {
@@ -125,16 +84,20 @@ export class OptimizelyProvider extends React.Component<
       // dont react to updates on server
       return
     }
+    console.log('OptimizelyProvider componentDidUpdate', prevProps, this.props)
+    const { optimizely  } = this.props
     if (this.props.user && 'id' in this.props.user) {
-      if (!this.optimizely.user.id) {
+      console.log('id in user props')
+      if (!optimizely.user.id) {
+        console.log('optimizely.user is not present', this.props.user)
         // no user is set in optimizely, update
-        this.optimizely.setUser(this.props.user)
+        optimizely.setUser(this.props.user)
       } else if (
         // if the users aren't equal update
-        !this.usersAreEqual(
+        !areUsersEqual(
           {
-            id: this.optimizely.user.id,
-            attributes: this.optimizely.user.attributes,
+            id: optimizely.user.id,
+            attributes: optimizely.user.attributes,
           },
           {
             id: this.props.user.id,
@@ -143,16 +106,16 @@ export class OptimizelyProvider extends React.Component<
           },
         )
       ) {
-        this.optimizely.setUser(this.props.user)
+        optimizely.setUser(this.props.user)
       }
     }
   }
 
   render() {
-    const { children, timeout } = this.props
+    const { optimizely, children, timeout } = this.props
     const isServerSide = !!this.props.isServerSide
     const value = {
-      optimizely: this.optimizely,
+      optimizely,
       isServerSide,
       timeout,
     }

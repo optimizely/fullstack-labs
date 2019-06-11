@@ -91,11 +91,19 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
         isEnabled,
         variables,
       })
-    })
 
-    if (!this.autoUpdate) {
+      if (this.autoUpdate) {
+        this.setupAutoUpdateListeners()
+      }
+    })
+  }
+
+  setupAutoUpdateListeners() {
+    const { optimizely, feature } = this.props
+    if (optimizely === null) {
       return
     }
+    console.log('setting up autoUpdateListeners')
 
     this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
       'OPTIMIZELY_CONFIG_UPDATE',
