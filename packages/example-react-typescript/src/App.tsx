@@ -15,6 +15,7 @@ import {
 
 import { OptimizelySDKWrapper } from '@optimizely/js-web-sdk'
 import OTrackerButton from './TrackerButton'
+import MyHOC from './MyHOC';
 
 interface AppProps {
   optimizely: OptimizelySDKWrapper
@@ -52,6 +53,7 @@ export default class App extends React.Component<AppProps> {
         userAttributes={{ attribute1: 'yesssss' }}
       >
         <div className="App">
+          <MyHOC title="got variation: "/>
           <Example title="Decorator">
             <OTrackerButton text="jordan" />
           </Example>
