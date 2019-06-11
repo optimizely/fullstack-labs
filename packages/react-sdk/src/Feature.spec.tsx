@@ -56,6 +56,10 @@ describe('<OptimizelyFeature>', () => {
         addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
         removeNotificationListener: jest.fn().mockImplementation(id => {}),
       },
+      user: {
+        id: 'testuser',
+        attributes: {},
+      },
     } as unknown) as ReactSDKClient
   })
   it('throws an error when not rendered in the context of an OptimizelyProvider', () => {
@@ -85,7 +89,7 @@ describe('<OptimizelyFeature>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
@@ -109,7 +113,7 @@ describe('<OptimizelyFeature>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ sucess: true })
 
       await sleep()
 
@@ -133,7 +137,7 @@ describe('<OptimizelyFeature>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ sucess: true })
 
       await sleep()
 
@@ -158,7 +162,7 @@ describe('<OptimizelyFeature>', () => {
 
         // while it's waiting for onReady()
         expect(component.text()).toBe(null)
-        resolver.resolve()
+        resolver.resolve({ sucess: true })
 
         await sleep()
 
@@ -201,7 +205,7 @@ describe('<OptimizelyFeature>', () => {
 
         // while it's waiting for onReady()
         expect(component.text()).toBe(null)
-        resolver.resolve()
+        resolver.resolve({ sucess: true })
 
         await sleep()
 
@@ -225,6 +229,32 @@ describe('<OptimizelyFeature>', () => {
         expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledTimes(2)
 
         expect(component.text()).toBe('false|baz')
+      })
+    })
+
+    describe('when the onReady() promise returns { success: false }', () => {
+      it('should still render', async () => {
+        const component = mount(
+          <OptimizelyProvider optimizely={optimizelyMock} timeout={200}>
+            <OptimizelyFeature feature="feature1">
+              {(isEnabled, variables) =>
+                `${isEnabled ? 'true' : 'false'}|${variables.foo}`
+              }
+            </OptimizelyFeature>
+          </OptimizelyProvider>,
+        )
+
+        expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
+
+        // while it's waiting for onReady()
+        expect(component.text()).toBe(null)
+        resolver.resolve({ sucess: false, reason: 'fail' })
+
+        await sleep()
+
+        expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
+        expect(component.text()).toBe('true|bar')
       })
     })
   })

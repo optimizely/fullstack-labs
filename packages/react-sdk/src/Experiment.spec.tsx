@@ -55,6 +55,10 @@ describe('<OptimizelyExperiment>', () => {
         addNotificationListener: jest.fn().mockImplementation((type, handler) => {}),
         removeNotificationListener: jest.fn().mockImplementation(id => {}),
       },
+      user: {
+        id: 'testuser',
+        attributes: {},
+      },
     } as unknown) as ReactSDKClient
   })
 
@@ -82,7 +86,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ sucess: true })
 
       await sleep()
 
@@ -90,7 +94,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe(variationKey)
     })
 
-    it('should allow timeout to be overrided', async () => {
+    it('should allow timeout to be overridden', async () => {
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock} timeout={100}>
           <OptimizelyExperiment experiment="experiment1" timeout={200}>
@@ -102,7 +106,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ sucess: true })
 
       await sleep()
 
@@ -121,7 +125,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
@@ -145,7 +149,7 @@ describe('<OptimizelyExperiment>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
@@ -166,7 +170,7 @@ describe('<OptimizelyExperiment>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
@@ -189,11 +193,36 @@ describe('<OptimizelyExperiment>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
       expect(component.text()).toBe(null)
+    })
+
+    describe('when the onReady() promise return { sucess: false }', () => {
+      it('should still render', async () => {
+        const component = mount(
+          <OptimizelyProvider optimizely={optimizelyMock}>
+            <OptimizelyExperiment experiment="experiment1">
+              <OptimizelyVariation variation="otherVariation">
+                other variation
+              </OptimizelyVariation>
+              <OptimizelyVariation variation="otherVariation2">
+                other variation 2
+              </OptimizelyVariation>
+            </OptimizelyExperiment>
+          </OptimizelyProvider>,
+        )
+
+        // while it's waiting for onReady()
+        expect(component.text()).toBe(null)
+        resolver.resolve({ success: false, reason: 'fail' })
+
+        await sleep()
+
+        expect(component.text()).toBe(null)
+      })
     })
   })
 
@@ -210,7 +239,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
@@ -247,7 +276,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
       expect(component.text()).toBe(null)
-      resolver.resolve()
+      resolver.resolve({ success: true })
 
       await sleep()
 
@@ -256,10 +285,10 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('variationResult')
 
       // capture the onUserUpdate function
-      const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock
-        .calls[0][0]
-
-      ;(optimizelyMock.activate as jest.Mock).mockImplementationOnce(() => 'newVariation')
+      const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock.calls[0][0]
+      ;(optimizelyMock.activate as jest.Mock).mockImplementationOnce(
+        () => 'newVariation',
+      )
       updateFn()
       expect(optimizelyMock.activate).toBeCalledTimes(2)
 
