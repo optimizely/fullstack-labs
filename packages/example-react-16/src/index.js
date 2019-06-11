@@ -11,14 +11,14 @@ const optimizely = optimizelyReactSDK.createInstance({
   sdkKey: 'BsSyVRsUbE3ExgGCJ9w1to',
 })
 
-optimizely.onReady().then(() => {
-  optimizely.notificationCenter.addNotificationListener(
-    optimizelyReactSDK.enums.NOTIFICATION_TYPES.ACTIVATE,
-    data => {
-      console.log('I activated', data.experiment.key)
-    },
-  )
-})
+// optimizely.onReady().then(() => {
+//   optimizely.notificationCenter.addNotificationListener(
+//     optimizelyReactSDK.enums.NOTIFICATION_TYPES.ACTIVATE,
+//     data => {
+//       console.log('I activated', data.experiment.key)
+//     },
+//   )
+// })
 
 async function main() {
   ReactDOM.render(<App optimizely={optimizely} />, document.getElementById('root'))
