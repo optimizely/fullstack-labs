@@ -17,7 +17,7 @@ import * as React from 'react'
 import { Subtract } from 'utility-types'
 
 import { OptimizelyContextConsumer } from './Context'
-import { UserWrappedOptimizelySDK } from './createUserWrapper';
+import { UserWrappedOptimizelySDK } from './createUserWrapper'
 
 export interface WithOptimizelyProps {
   optimizely: UserWrappedOptimizelySDK | null
@@ -27,7 +27,7 @@ export interface WithOptimizelyProps {
 
 export function withOptimizely<P extends WithOptimizelyProps>(
   Component: React.ComponentType<P>,
-) {
+): React.ComponentType<Subtract<P, WithOptimizelyProps>> {
   return class WithOptimizely extends React.Component<Subtract<P, WithOptimizelyProps>> {
     render() {
       return (
@@ -37,6 +37,7 @@ export function withOptimizely<P extends WithOptimizelyProps>(
             isServerSide: boolean
             timeout: number | undefined
           }) => (
+            // @ts-ignore
             <Component
               {...this.props}
               optimizely={value.optimizely}
