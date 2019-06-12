@@ -7,6 +7,7 @@ import * as serviceWorker from './serviceWorker'
 import * as optimizelyReactSDK from '@optimizely/react-sdk'
 
 optimizelyReactSDK.setLogLevel('info')
+optimizelyReactSDK.setLogger(null)
 const optimizely = optimizelyReactSDK.createInstance({
   sdkKey: 'BsSyVRsUbE3ExgGCJ9w1to',
 })
