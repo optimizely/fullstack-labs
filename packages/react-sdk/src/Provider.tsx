@@ -16,15 +16,21 @@
 import * as React from 'react'
 
 import { OptimizelyContextProvider } from './Context'
-import { OptimizelySDKWrapper, OptimizelyClientWrapper } from '@optimizely/js-web-sdk'
-import { UserAttributes, createUserWrapper, UserWrappedOptimizelySDK } from './createUserWrapper';
+import { ReactSDKClient, UserAttributes, createInstance } from './client'
+import { areUsersEqual } from './utils';
+
+type UserInfo = {
+  id: string
+  attributes?: UserAttributes
+}
 
 interface OptimizelyProviderProps {
-  optimizely: OptimizelyClientWrapper
-  userId: string
+  optimizely: ReactSDKClient
   timeout?: number
-  userAttributes?: UserAttributes
   isServerSide?: boolean
+  user?: Promise<UserInfo> | UserInfo
+  userId?: string
+  userAttributes?: UserAttributes
 }
 
 interface OptimizelyProviderState {
@@ -36,32 +42,86 @@ export class OptimizelyProvider extends React.Component<
   OptimizelyProviderProps,
   OptimizelyProviderState
 > {
-  sdkWrapper: UserWrappedOptimizelySDK
-
   constructor(props: OptimizelyProviderProps) {
     super(props)
+    const { optimizely, userId, userAttributes, user} = props
 
-    const { optimizely, userId, userAttributes } = props
-    this.sdkWrapper = createUserWrapper({
-      instance: optimizely,
-      userId,
-      userAttributes,
-    })
+    // check if user id/attributes are provided as props and set them ReactSDKClient
+    let finalUser: {
+      id: string
+      attributes: UserAttributes
+    } | null = null
+
+    if (user) {
+      if ('then' in user) {
+        user.then(user => {
+          optimizely.setUser(user)
+        })
+      } else {
+        finalUser = {
+          id: user.id,
+          attributes: user.attributes || {},
+        }
+      }
+    } else if (userId) {
+      finalUser = {
+        id: userId,
+        attributes: userAttributes || {},
+      }
+      // deprecation warning
+      console.warn(
+        'Passing userId and userAttributes as props is deprecated, please switch to using `user` prop',
+      )
+    }
+
+    if (finalUser) {
+      optimizely.setUser(finalUser)
+    }
+  }
+
+  componentDidUpdate(prevProps: OptimizelyProviderProps): void {
+    if (prevProps.isServerSide) {
+      // dont react to updates on server
+      return
+    }
+    console.log('OptimizelyProvider componentDidUpdate', prevProps, this.props)
+    const { optimizely  } = this.props
+    if (this.props.user && 'id' in this.props.user) {
+      console.log('id in user props')
+      if (!optimizely.user.id) {
+        console.log('optimizely.user is not present', this.props.user)
+        // no user is set in optimizely, update
+        optimizely.setUser(this.props.user)
+      } else if (
+        // if the users aren't equal update
+        !areUsersEqual(
+          {
+            id: optimizely.user.id,
+            attributes: optimizely.user.attributes,
+          },
+          {
+            id: this.props.user.id,
+            // TODO see if we can use computeDerivedStateFromProps
+            attributes: this.props.user.attributes || {},
+          },
+        )
+      ) {
+        optimizely.setUser(this.props.user)
+      }
+    }
   }
 
   render() {
-    const { children, timeout } = this.props
+    const { optimizely, children, timeout } = this.props
     const isServerSide = !!this.props.isServerSide
     const value = {
-      optimizely: this.sdkWrapper,
+      optimizely,
       isServerSide,
       timeout,
     }
 
     return (
-      <OptimizelyContextProvider value={value}>
-        {children}
-      </OptimizelyContextProvider>
+      <OptimizelyContextProvider value={value}>{children}</OptimizelyContextProvider>
     )
   }
 }

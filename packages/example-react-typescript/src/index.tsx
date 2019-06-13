@@ -1,15 +1,15 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import App from './App'
-import * as optimizelySdk from '@optimizely/js-web-sdk'
+import * as optimizelyReactSDK from '@optimizely/react-sdk'
 ;(async function() {
-  const optimizely = optimizelySdk.createInstance({
+  const optimizely = optimizelyReactSDK.createInstance({
     sdkKey: 'BsSyVRsUbE3ExgGCJ9w1to',
   })
   await optimizely.onReady()
 
   optimizely.notificationCenter.addNotificationListener(
-    optimizelySdk.enums.NOTIFICATION_TYPES.ACTIVATE,
+    optimizelyReactSDK.enums.NOTIFICATION_TYPES.ACTIVATE,
     (data: any) => {
       console.log('jordan', data)
     },
