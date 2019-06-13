@@ -25,28 +25,34 @@ export interface WithOptimizelyProps {
   isServerSide: boolean
 }
 
-export function withOptimizely<P extends WithOptimizelyProps>(
+export function withOptimizely<P extends WithOptimizelyProps, R>(
   Component: React.ComponentType<P>,
-): React.ComponentType<Subtract<P, WithOptimizelyProps>> {
-  return class WithOptimizely extends React.Component<Subtract<P, WithOptimizelyProps>> {
-    render() {
-      return (
-        <OptimizelyContextConsumer>
-          {(value: {
-            optimizely: UserWrappedOptimizelySDK
-            isServerSide: boolean
-            timeout: number | undefined
-          }) => (
-            // @ts-ignore
-            <Component
-              {...this.props}
-              optimizely={value.optimizely}
-              optimizelyReadyTimeout={value.timeout}
-              isServerSide={value.isServerSide}
-            />
-          )}
-        </OptimizelyContextConsumer>
-      )
-    }
+): React.ForwardRefExoticComponent<
+  React.PropsWithoutRef<Subtract<P, WithOptimizelyProps>> & React.RefAttributes<R>
+> {
+  const WithOptimizely: React.RefForwardingComponent<
+    R,
+    Subtract<P, WithOptimizelyProps>
+  > = (props, ref) => {
+    return (
+      // Note: Casting props to P is necessary because of this TypeScript issue:
+      // https://github.com/microsoft/TypeScript/issues/28884
+      <OptimizelyContextConsumer>
+        {(value: {
+          optimizely: UserWrappedOptimizelySDK
+          isServerSide: boolean
+          timeout: number | undefined
+        }) => (
+          <Component
+            {...props as P}
+            optimizely={value.optimizely}
+            optimizelyReadyTimeout={value.timeout}
+            isServerSide={value.isServerSide}
+            ref={ref}
+          />
+        )}
+      </OptimizelyContextConsumer>
+    )
   }
+  return React.forwardRef(WithOptimizely)
 }

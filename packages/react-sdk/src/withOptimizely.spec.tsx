@@ -113,4 +113,39 @@ describe('withOptimizely', () => {
       optimizelyReadyTimeout: 200,
     })
   })
+
+  it('should forward refs', () => {
+    interface FancyButtonProps extends TestProps {
+      children?: React.ReactNode
+    }
+    const FancyButton: React.RefForwardingComponent<
+      HTMLButtonElement,
+      FancyButtonProps
+    > = (props, ref) => (
+      <button ref={ref} className="FancyButton">
+        {props.children}
+      </button>
+    )
+    const ForwardingFancyButton = React.forwardRef(FancyButton)
+    const OptimizelyButton = withOptimizely(ForwardingFancyButton)
+    const buttonRef: React.RefObject<HTMLButtonElement> = React.createRef()
+
+    const optimizelyMock = ({} as unknown) as OptimizelyClientWrapper
+
+    const component = mount(
+      <OptimizelyProvider
+        optimizely={optimizelyMock}
+        timeout={200}
+        userId="jordan"
+        userAttributes={{ plan_type: 'bronze' }}
+        isServerSide={true}
+      >
+        <OptimizelyButton ref={buttonRef}>Hello</OptimizelyButton>
+      </OptimizelyProvider>,
+    )
+    expect(buttonRef.current).toBeInstanceOf(HTMLButtonElement)
+    // const buttons = component.find('button')
+    // expect(buttons.length).toBe(1)
+    // expect(buttons.prop('ref')).not.toBe(undefined)
+  })
 })
