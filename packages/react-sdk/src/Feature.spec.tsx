@@ -76,10 +76,12 @@ describe('<OptimizelyFeature>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: undefined })
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve()
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith(
         'feature1',
@@ -131,10 +133,12 @@ describe('<OptimizelyFeature>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve()
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith(
         'feature1',

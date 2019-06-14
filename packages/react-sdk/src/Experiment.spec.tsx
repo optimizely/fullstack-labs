@@ -77,10 +77,12 @@ describe('<OptimizelyExperiment>', () => {
 
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve()
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1', 'jordan', {
         plan_type: 'bronze',
@@ -118,10 +120,12 @@ describe('<OptimizelyExperiment>', () => {
       )
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve()
 
       await sleep()
+
+      component.update()
 
       expect(component.text()).toBe('correct variation')
     })
@@ -153,15 +157,17 @@ describe('<OptimizelyExperiment>', () => {
       )
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve()
 
       await sleep()
 
+      component.update()
+
       expect(component.text()).toBe('default variation')
     })
 
-    it('should render null when no default or matching variation is provided', async () => {
+    it('should render no text when no default or matching variation is provided', async () => {
       let resolver: any
       const variationKey = 'variationResult'
       const onReadyPromise = new Promise((resolve, reject) => {
@@ -190,12 +196,12 @@ describe('<OptimizelyExperiment>', () => {
       )
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve()
 
       await sleep()
 
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
     })
   })
 
