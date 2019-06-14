@@ -115,24 +115,20 @@ describe('withOptimizely', () => {
   })
 
   it('should forward refs', () => {
-    interface FancyButtonProps extends TestProps {
-      children?: React.ReactNode
+    interface FancyInputProps extends TestProps {
+      defaultValue: string
     }
-    const FancyButton: React.RefForwardingComponent<
-      HTMLButtonElement,
-      FancyButtonProps
-    > = (props, ref) => (
-      <button ref={ref} className="FancyButton">
-        {props.children}
-      </button>
-    )
-    const ForwardingFancyButton = React.forwardRef(FancyButton)
-    const OptimizelyButton = withOptimizely(ForwardingFancyButton)
-    const buttonRef: React.RefObject<HTMLButtonElement> = React.createRef()
+    const FancyInput: React.RefForwardingComponent<HTMLInputElement, FancyInputProps> = (
+      props,
+      ref,
+    ) => <input ref={ref} className="fancyInput" defaultValue={props.defaultValue} />
+    const ForwardingFancyInput = React.forwardRef(FancyInput)
+    const OptimizelyInput = withOptimizely(ForwardingFancyInput)
+    const inputRef: React.RefObject<HTMLInputElement> = React.createRef()
 
     const optimizelyMock = ({} as unknown) as OptimizelyClientWrapper
 
-    const component = mount(
+    mount(
       <OptimizelyProvider
         optimizely={optimizelyMock}
         timeout={200}
@@ -140,12 +136,10 @@ describe('withOptimizely', () => {
         userAttributes={{ plan_type: 'bronze' }}
         isServerSide={true}
       >
-        <OptimizelyButton ref={buttonRef}>Hello</OptimizelyButton>
+        <OptimizelyInput ref={inputRef} defaultValue="hi" />
       </OptimizelyProvider>,
     )
-    expect(buttonRef.current).toBeInstanceOf(HTMLButtonElement)
-    // const buttons = component.find('button')
-    // expect(buttons.length).toBe(1)
-    // expect(buttons.prop('ref')).not.toBe(undefined)
+    expect(inputRef.current).toBeInstanceOf(HTMLInputElement)
+    expect(typeof inputRef.current!.focus).toBe('function')
   })
 })
