@@ -22,8 +22,9 @@ export type OnReadyResult = {
 export interface ReactSDKClient extends optimizely.Client {
   user: UserInfo
 
+  // TODO: is this even a necessary override?
   onReady(opts?: { timeout?: number }): Promise<any>
-  setUser(userInfo: { id: string; userAttributes?: { [key: string]: any } }): void
+  setUser(userInfo: { id: string; attributes?: { [key: string]: any } }): void
   onUserUpdate(handler: OnUserUpdateHandler): DisposeFn
 
   activate(
@@ -106,7 +107,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   private isUserPromiseResolved: boolean = false
   private onUserUpdateHandlers: OnUserUpdateHandler[] = []
 
-  protected client: optimizely.Client
+  public client: optimizely.Client
 
   // promise keeping track of async requests for initializing client instance
   private dataReadyPromise: Promise<OnReadyResult>
