@@ -201,7 +201,7 @@ describe('<OptimizelyExperiment>', () => {
 
       await sleep()
 
-      expect(component.text()).toBe('')
+      expect(component.text()).toBe(null)
     })
 
     describe('when the onReady() promise return { sucess: false }', () => {
