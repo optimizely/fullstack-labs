@@ -153,6 +153,8 @@ describe('<OptimizelyExperiment>', () => {
 
       await sleep()
 
+      component.update()
+
       expect(component.text()).toBe('correct variation')
     })
 
@@ -173,6 +175,8 @@ describe('<OptimizelyExperiment>', () => {
       resolver.resolve({ success: true })
 
       await sleep()
+
+      component.update()
 
       expect(component.text()).toBe('default variation')
     })
@@ -197,7 +201,7 @@ describe('<OptimizelyExperiment>', () => {
 
       await sleep()
 
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
     })
 
     describe('when the onReady() promise return { sucess: false }', () => {
