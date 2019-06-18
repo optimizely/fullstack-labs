@@ -33,10 +33,6 @@ class TrackerButton extends React.Component {
   }
 
   render() {
-    const { variation } = this.state
-    if (variation === null) {
-      return null
-    }
     return <button onClick={this.track}>{JSON.stringify(this.state.variation)}</button>
   }
 }
@@ -48,14 +44,12 @@ class App extends Component {
       <OptimizelyProvider
         optimizely={this.props.optimizely}
         timeout={200}
-        user={{
-          id: 'jordan'
-        }}
+        userId="jordan"
       >
         <div>
           <h1>Test app: React 16</h1>
           <OptimizelyTrackerButton experimentKey="cat_size" />
-          <OptimizelyFeature feature="feature1" autoUpdate={true}>
+          <OptimizelyFeature feature="feature1">
             {(isEnabled, variables) => (
               <div>
                 <h2>feature: feature1</h2>

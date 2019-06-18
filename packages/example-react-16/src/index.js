@@ -4,22 +4,22 @@ import './index.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 
-import * as optimizelyReactSDK from '@optimizely/react-sdk'
+import optimizelyReactSDK, { withOptimizely } from '@optimizely/react-sdk'
+import * as optimizelySDK from '@optimizely/js-web-sdk'
 
-optimizelyReactSDK.setLogLevel('info')
-optimizelyReactSDK.setLogger(null)
-const optimizely = optimizelyReactSDK.createInstance({
+const optimizely = optimizelySDK.createInstance({
+  userId: 'user' + Date.now(),
   sdkKey: 'BsSyVRsUbE3ExgGCJ9w1to',
 })
 
-// optimizely.onReady().then(() => {
-//   optimizely.notificationCenter.addNotificationListener(
-//     optimizelyReactSDK.enums.NOTIFICATION_TYPES.ACTIVATE,
-//     data => {
-//       console.log('I activated', data.experiment.key)
-//     },
-//   )
-// })
+optimizely.onReady().then(() => {
+  optimizely.notificationCenter.addNotificationListener(
+    optimizelySDK.enums.NOTIFICATION_TYPES.ACTIVATE,
+    data => {
+      console.log('I activated', data.experiment.key)
+    },
+  )
+})
 
 async function main() {
   ReactDOM.render(<App optimizely={optimizely} />, document.getElementById('root'))

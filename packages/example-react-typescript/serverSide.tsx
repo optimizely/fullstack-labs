@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 
-import * as optimizelySDK from '@optimizely/react-sdk'
+import * as optimizelySDK from '@optimizely/js-web-sdk'
 import {
   OptimizelyProvider,
   OptimizelyFeature,

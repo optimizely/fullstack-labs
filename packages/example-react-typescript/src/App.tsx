@@ -13,12 +13,12 @@ import {
   withOptimizely,
 } from '@optimizely/react-sdk'
 
-import { ReactSDKClient } from '@optimizely/react-sdk'
+import { OptimizelySDKWrapper } from '@optimizely/js-web-sdk'
 import OTrackerButton from './TrackerButton'
 import MyHOC from './MyHOC';
 
 interface AppProps {
-  optimizely: ReactSDKClient
+  optimizely: OptimizelySDKWrapper
 }
 
 type FeatureProps = { isEnabled: boolean; variables: object }
