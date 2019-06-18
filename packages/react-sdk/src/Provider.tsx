@@ -84,12 +84,9 @@ export class OptimizelyProvider extends React.Component<
       // dont react to updates on server
       return
     }
-    console.log('OptimizelyProvider componentDidUpdate', prevProps, this.props)
     const { optimizely  } = this.props
     if (this.props.user && 'id' in this.props.user) {
-      console.log('id in user props')
       if (!optimizely.user.id) {
-        console.log('optimizely.user is not present', this.props.user)
         // no user is set in optimizely, update
         optimizely.setUser(this.props.user)
       } else if (
