@@ -22,7 +22,6 @@ export type OnReadyResult = {
 export interface ReactSDKClient extends optimizely.Client {
   user: UserInfo
 
-  // TODO: is this even a necessary override?
   onReady(opts?: { timeout?: number }): Promise<any>
   setUser(userInfo: { id: string; attributes?: { [key: string]: any } }): void
   onUserUpdate(handler: OnUserUpdateHandler): DisposeFn
@@ -79,6 +78,11 @@ export interface ReactSDKClient extends optimizely.Client {
     overrideAttributes?: UserAttributes,
   ): boolean
 
+  getEnabledFeatures(
+    overrideUserId?: string,
+    overrideAttributes?: UserAttributes,
+  ): Array<string>
+
   track(
     eventKey: string,
     overrideUserId?: string | EventTags,
@@ -128,15 +132,14 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       this.userPromiseResovler = resolve
     }).then(() => ({ success: true }))
 
-    this.dataReadyPromise = Promise.all([
-      this.userPromise,
-      this.client.onReady(),
-    ]).then(() => {
-      return {
-        success: true,
-        reason: "datafile and user resolved"
-      }
-    })
+    this.dataReadyPromise = Promise.all([this.userPromise, this.client.onReady()]).then(
+      () => {
+        return {
+          success: true,
+          reason: 'datafile and user resolved',
+        }
+      },
+    )
   }
 
   onReady(config: { timeout?: number } = {}): Promise<OnReadyResult> {
