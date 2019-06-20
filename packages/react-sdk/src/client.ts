@@ -106,6 +106,14 @@ export interface ReactSDKClient extends optimizely.Client {
     overrideAttributes?: UserAttributes,
     eventTags?: EventTags,
   ): void
+
+  setForcedVariation(
+    experiment: string,
+    overrideUserIdOrVariationKey: string,
+    variationKey?: string | null,
+  ): boolean
+
+  getForcedVariation(experiment: string, overrideUserId?: string): string | null
 }
 
 type UserInfo = {
@@ -547,6 +555,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     let finalVariationKey: string | null = null
     if (arguments.length === 2) {
       finalVariationKey = overrideUserIdOrVariationKey
+      finalUserId = this.getUserIdAndAttributes()[0]
     } else if (arguments.length === 3) {
       const res = this.getUserIdAndAttributes(overrideUserIdOrVariationKey)
       finalUserId = res[0]

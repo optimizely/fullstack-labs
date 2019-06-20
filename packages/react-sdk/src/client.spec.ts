@@ -389,6 +389,36 @@ describe('ReactSDKClient', () => {
           { bar: 'baz' },
         )
       })
+
+      it('can use pre-set and override user for setForcedVariation', () => {
+        ;(mockInnerClient.setForcedVariation as jest.Mock).mockReturnValue(true)
+        let result = instance.setForcedVariation('exp1', 'var1')
+        expect(result).toBe(true)
+        expect(mockInnerClient.setForcedVariation).toBeCalledTimes(1)
+        expect(mockInnerClient.setForcedVariation).toBeCalledWith('exp1', 'user1', 'var1')
+
+        ;(mockInnerClient.setForcedVariation as jest.Mock).mockReset()
+        ;(mockInnerClient.setForcedVariation as jest.Mock).mockReturnValue(false)
+        result = instance.setForcedVariation('exp1', 'user2', 'var1')
+        expect(result).toBe(false)
+        expect(mockInnerClient.setForcedVariation).toBeCalledTimes(1)
+        expect(mockInnerClient.setForcedVariation).toBeCalledWith('exp1', 'user2', 'var1')
+      })
+
+      it('can use pre-set and override user for getForcedVariation', () => {
+        ;(mockInnerClient.getForcedVariation as jest.Mock).mockReturnValue('var1')
+        let result = instance.getForcedVariation('exp1')
+        expect(result).toBe('var1')
+        expect(mockInnerClient.getForcedVariation).toBeCalledTimes(1)
+        expect(mockInnerClient.getForcedVariation).toBeCalledWith('exp1', 'user1')
+
+        ;(mockInnerClient.getForcedVariation as jest.Mock).mockReset()
+        ;(mockInnerClient.getForcedVariation as jest.Mock).mockReturnValue(null)
+        result = instance.getForcedVariation('exp1', 'user2')
+        expect(result).toBe(null)
+        expect(mockInnerClient.getForcedVariation).toBeCalledTimes(1)
+        expect(mockInnerClient.getForcedVariation).toBeCalledWith('exp1', 'user2')
+      })
     })
 
     describe('getFeatureVariables', () => {
