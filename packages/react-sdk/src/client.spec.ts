@@ -15,12 +15,7 @@
  */
 import * as optimizely from '@optimizely/optimizely-sdk'
 
-import {
-  createInstance,
-  OnReadyResult,
-  ReactSDKClient,
-  VariableSpecifier,
-} from './client'
+import { createInstance, OnReadyResult, ReactSDKClient } from './client'
 
 describe('ReactSDKClient', () => {
   const config: optimizely.Config = {
@@ -397,35 +392,45 @@ describe('ReactSDKClient', () => {
 
     describe('getFeatureVariables', () => {
       // TODO: write tests for getFeatureVariables
-      const variableSpecifiers: VariableSpecifier[] = [
-        {
-          type: 'boolean',
-          key: 'bvar',
-        },
-        {
-          type: 'string',
-          key: 'svar',
-        },
-        {
-          type: 'integer',
-          key: 'ivar',
-        },
-        {
-          type: 'double',
-          key: 'dvar',
-        },
-      ]
       it('returns an empty object when the inner SDK returns no variables', () => {
         ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(null)
         ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(null)
         ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReturnValue(null)
         ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReturnValue(null)
         const instance = createInstance(config)
-        const result = instance.getFeatureVariables('feat1', variableSpecifiers)
+        const result = instance.getFeatureVariables('feat1')
         expect(result).toEqual({})
       })
 
       it('returns an object with variables of all types returned from the inner sdk ', () => {
+        ;(mockInnerClient as any).projectConfigManager = {
+          getConfig() {
+            return {
+              featureKeyMap: {
+                feat1: {
+                  variables: [
+                    {
+                      type: 'boolean',
+                      key: 'bvar',
+                    },
+                    {
+                      type: 'string',
+                      key: 'svar',
+                    },
+                    {
+                      type: 'integer',
+                      key: 'ivar',
+                    },
+                    {
+                      type: 'double',
+                      key: 'dvar',
+                    },
+                  ],
+                },
+              },
+            }
+          },
+        }
         ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(true)
         ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(
           'whatsup',
@@ -436,24 +441,12 @@ describe('ReactSDKClient', () => {
         instance.setUser({
           id: 'user1123',
         })
-        let result = instance.getFeatureVariables('feat1', variableSpecifiers)
+        const result = instance.getFeatureVariables('feat1')
         expect(result).toEqual({
           bvar: true,
           svar: 'whatsup',
           ivar: 10,
           dvar: -10.5,
-        })
-
-        ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(null)
-        ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(null)
-        ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReturnValue(null)
-        ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReturnValue(null)
-        result = instance.getFeatureVariables('feat1', variableSpecifiers)
-        expect(result).toEqual({
-          bvar: null,
-          svar: null,
-          ivar: null,
-          dvar: null,
         })
       })
     })

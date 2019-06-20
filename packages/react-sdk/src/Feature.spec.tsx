@@ -77,10 +77,7 @@ describe('<OptimizelyFeature>', () => {
     it('should wait until onReady() is resolved then render result of isFeatureEnabled and getFeatureVariables', async () => {
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock}>
-          <OptimizelyFeature
-            feature="feature1"
-            variables={[{ key: 'foo', type: 'string' }]}
-          >
+          <OptimizelyFeature feature="feature1">
             {(isEnabled, variables) =>
               `${isEnabled ? 'true' : 'false'}|${variables.foo}`
             }
@@ -97,9 +94,7 @@ describe('<OptimizelyFeature>', () => {
       await sleep()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
-      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1', [
-        { key: 'foo', type: 'string' },
-      ])
+      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
       expect(component.text()).toBe('true|bar')
     })
 
@@ -123,7 +118,7 @@ describe('<OptimizelyFeature>', () => {
       await sleep()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
-      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1', [])
+      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
       expect(component.text()).toBe('true|bar')
     })
 
@@ -147,7 +142,7 @@ describe('<OptimizelyFeature>', () => {
       await sleep()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
-      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1', [])
+      expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
       expect(component.text()).toBe('true|bar')
     })
 
@@ -172,7 +167,7 @@ describe('<OptimizelyFeature>', () => {
         await sleep()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
-        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1', [])
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
         expect(component.text()).toBe('true|bar')
 
         const updateFn = (optimizelyMock.notificationCenter
@@ -215,7 +210,7 @@ describe('<OptimizelyFeature>', () => {
         await sleep()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
-        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1', [])
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
         expect(component.text()).toBe('true|bar')
 
         const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock.calls[0][0]
@@ -258,7 +253,7 @@ describe('<OptimizelyFeature>', () => {
         await sleep()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
-        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1', [])
+        expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
         expect(component.text()).toBe('true|bar')
       })
     })
