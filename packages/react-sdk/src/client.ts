@@ -353,56 +353,57 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       return {}
     }
     let variableObj: { [key: string]: any } = {}
-    try {
-      const config = (this.client as any).projectConfigManager.getConfig()
-      const feature = config.featureKeyMap[featureKey]
-      if (!feature) {
-        return {}
+    const config = (this.client as any).projectConfigManager.getConfig()
+    if (!config) {
+      return {}
+    }
+    const feature = config.featureKeyMap[featureKey]
+    if (!feature) {
+      return {}
+    }
+    let variables: object[] = feature.variables
+    variables.forEach((variableDef: any) => {
+      let type: any = variableDef.type
+      let key: any = variableDef.key
+
+      switch (type) {
+        case 'string':
+          variableObj[key] = this.client.getFeatureVariableString(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        case 'boolean':
+          variableObj[key] = this.client.getFeatureVariableBoolean(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        case 'integer':
+          variableObj[key] = this.client.getFeatureVariableInteger(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        case 'double':
+          variableObj[key] = this.client.getFeatureVariableDouble(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
       }
-      let variables: object[] = feature.variables
-      variables.forEach((variableDef: any) => {
-        let type: any = variableDef.type
-        let key: any = variableDef.key
-
-        switch (type) {
-          case 'string':
-            variableObj[key] = this.client.getFeatureVariableString(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-
-          case 'boolean':
-            variableObj[key] = this.client.getFeatureVariableBoolean(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-
-          case 'integer':
-            variableObj[key] = this.client.getFeatureVariableInteger(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-
-          case 'double':
-            variableObj[key] = this.client.getFeatureVariableDouble(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-        }
-      })
-    } catch (e) {}
+    })
 
     return variableObj
   }
