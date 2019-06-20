@@ -19,6 +19,11 @@ export type OnReadyResult = {
   reason?: string
 }
 
+export interface VariableSpecifier {
+  type: 'boolean' | 'integer' | 'double' | 'string'
+  key: string
+}
+
 export interface ReactSDKClient extends optimizely.Client {
   user: UserInfo
 
@@ -40,6 +45,7 @@ export interface ReactSDKClient extends optimizely.Client {
 
   getFeatureVariables(
     featureKey: string,
+    variables: VariableSpecifier[],
     overrideUserId?: string,
     overrideAttributes?: UserAttributes,
   ): VariableValuesObject
@@ -303,16 +309,18 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   }
 
   /**
-   * Get all variables for a feature, regardless of the feature being enabled/disabled
+   * Get specified variable values for a feature, regardless of the feature being enabled/disabled
    *
    * @param {string} feature
-   * @param {string} userId
-   * @param {UserAttributes} [attributes]
+   * @param {VariableSpecifier[]} variableSpecifiers
+   * @param {string|undefined} overrideUserId
+   * @param {UserAttributes|undefined} overrideUserAttributes
    * @returns {VariableValuesObject}
    * @memberof OptimizelySDKWrapper
    */
   public getFeatureVariables(
     featureKey: string,
+    variableSpecifiers: VariableSpecifier[],
     overrideUserId?: string,
     overrideAttributes?: UserAttributes,
   ): VariableValuesObject {
@@ -327,59 +335,50 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       )
       return {}
     }
-    let variableObj: { [key: string]: any } = {}
-    try {
-      const config = (this.client as any).projectConfigManager.getConfig()
-      const feature = config.featureKeyMap[featureKey]
-      if (!feature) {
-        return {}
+    const variableValues: VariableValuesObject = {}
+    variableSpecifiers.forEach(({ type, key }) => {
+      switch (type) {
+        case 'string':
+          variableValues[key] = this.client.getFeatureVariableString(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        case 'boolean':
+          variableValues[key] = this.client.getFeatureVariableBoolean(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        case 'integer':
+          variableValues[key] = this.client.getFeatureVariableInteger(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        case 'double':
+          variableValues[key] = this.client.getFeatureVariableDouble(
+            featureKey,
+            key,
+            userId,
+            userAttributes,
+          )
+          break
+
+        default:
+          logger.warn('Unrecognized variable type %s', type)
       }
-      let variables: object[] = feature.variables
-      variables.forEach((variableDef: any) => {
-        let type: any = variableDef.type
-        let key: any = variableDef.key
-
-        switch (type) {
-          case 'string':
-            variableObj[key] = this.client.getFeatureVariableString(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-
-          case 'boolean':
-            variableObj[key] = this.client.getFeatureVariableBoolean(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-
-          case 'integer':
-            variableObj[key] = this.client.getFeatureVariableInteger(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-
-          case 'double':
-            variableObj[key] = this.client.getFeatureVariableDouble(
-              featureKey,
-              key,
-              userId,
-              userAttributes,
-            )
-            break
-        }
-      })
-    } catch (e) {}
-
-    return variableObj
+    })
+    return variableValues
   }
 
   /**

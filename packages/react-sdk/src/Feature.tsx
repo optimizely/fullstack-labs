@@ -15,7 +15,12 @@
  */
 import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
-import { VariableValuesObject, OnReadyResult, DEFAULT_ON_READY_TIMEOUT } from './client'
+import {
+  VariableSpecifier,
+  VariableValuesObject,
+  OnReadyResult,
+  DEFAULT_ON_READY_TIMEOUT,
+} from './client'
 import { getLogger } from '@optimizely/js-sdk-logging'
 
 const logger = getLogger('<OptimizelyFeature>')
@@ -23,6 +28,7 @@ const logger = getLogger('<OptimizelyFeature>')
 export interface FeatureProps extends WithOptimizelyProps {
   // TODO add support for overrideUserId
   feature: string
+  variables?: VariableSpecifier[]
   timeout?: number
   autoUpdate?: boolean
   children: (isEnabled: boolean, variables: VariableValuesObject) => React.ReactNode
@@ -44,18 +50,18 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
 
     this.unregisterUserListener = () => {}
 
-    const { autoUpdate, isServerSide, optimizely, feature } = props
+    const { autoUpdate, isServerSide, optimizely, feature, variables } = props
     this.autoUpdate = !!autoUpdate
     if (isServerSide) {
       if (optimizely === null) {
         throw new Error('optimizely prop must be supplied')
       }
       const isEnabled = optimizely.isFeatureEnabled(feature)
-      const variables = optimizely.getFeatureVariables(feature)
+      const stateVariables = optimizely.getFeatureVariables(feature, variables || [])
       this.state = {
         canRender: true,
         isEnabled,
-        variables,
+        variables: stateVariables,
       }
     } else {
       this.state = {
@@ -73,6 +79,7 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
       optimizelyReadyTimeout,
       isServerSide,
       timeout,
+      variables,
     } = this.props
     if (optimizely === null) {
       throw new Error('optimizely prop must be supplied')
@@ -88,7 +95,11 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
 
     optimizely.onReady({ timeout: finalReadyTimeout }).then((res: OnReadyResult) => {
       if (res.success) {
-        logger.info('feature="%s" successfully rendered for user="%s"', feature, optimizely.user.id)
+        logger.info(
+          'feature="%s" successfully rendered for user="%s"',
+          feature,
+          optimizely.user.id,
+        )
       } else {
         logger.info(
           'feature="%s" could not be checked before timeout of %sms, reason="%s" ',
@@ -99,11 +110,11 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
       }
 
       const isEnabled = optimizely.isFeatureEnabled(feature)
-      const variables = optimizely.getFeatureVariables(feature)
+      const stateVariables = optimizely.getFeatureVariables(feature, variables || [])
       this.setState({
         canRender: true,
         isEnabled,
-        variables,
+        variables: stateVariables,
       })
 
       if (this.autoUpdate) {
@@ -113,7 +124,7 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
   }
 
   setupAutoUpdateListeners() {
-    const { optimizely, feature } = this.props
+    const { optimizely, feature, variables } = this.props
     if (optimizely === null) {
       return
     }
@@ -121,23 +132,31 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
     this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
       'OPTIMIZELY_CONFIG_UPDATE',
       () => {
-        logger.info('OPTIMIZELY_CONFIG_UPDATE, re-evaluating feature="%s" for user="%s"', feature, optimizely.user.id)
+        logger.info(
+          'OPTIMIZELY_CONFIG_UPDATE, re-evaluating feature="%s" for user="%s"',
+          feature,
+          optimizely.user.id,
+        )
         const isEnabled = optimizely.isFeatureEnabled(feature)
-        const variables = optimizely.getFeatureVariables(feature)
+        const stateVariables = optimizely.getFeatureVariables(feature, variables || [])
         this.setState({
           isEnabled,
-          variables,
+          variables: stateVariables,
         })
       },
     )
 
     this.unregisterUserListener = optimizely.onUserUpdate(() => {
-      logger.info('OPTIMIZELY_CONFIG_UPDATE, re-evaluating feature="%s" for user="%s"', feature, optimizely.user.id)
+      logger.info(
+        'OPTIMIZELY_CONFIG_UPDATE, re-evaluating feature="%s" for user="%s"',
+        feature,
+        optimizely.user.id,
+      )
       const isEnabled = optimizely.isFeatureEnabled(feature)
-      const variables = optimizely.getFeatureVariables(feature)
+      const stateVariables = optimizely.getFeatureVariables(feature, variables || [])
       this.setState({
         isEnabled,
-        variables,
+        variables: stateVariables,
       })
     })
   }
