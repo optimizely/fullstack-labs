@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import * as optimizely from '@optimizely/optimizely-sdk'
 
 import { createInstance, OnReadyResult, ReactSDKClient } from './client'
@@ -391,7 +392,6 @@ describe('ReactSDKClient', () => {
     })
 
     describe('getFeatureVariables', () => {
-      // TODO: write tests for getFeatureVariables
       it('returns an empty object when the inner SDK returns no variables', () => {
         ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(null)
         ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(null)
