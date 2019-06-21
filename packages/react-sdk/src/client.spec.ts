@@ -162,20 +162,22 @@ describe('ReactSDKClient', () => {
             foo: 'bar',
           },
         })
-        ;(mockInnerClient.getEnabledFeatures as jest.Mock).mockReturnValue([
+        const mockFn = mockInnerClient.getEnabledFeatures as jest.Mock
+        mockFn.mockReturnValue([
           'feat1',
           'feat2',
         ])
       })
 
       it('can use pre-set and override user for activate', () => {
-        ;(mockInnerClient.activate as jest.Mock).mockReturnValue('var1')
+        const mockFn = mockInnerClient.activate as jest.Mock
+        mockFn.mockReturnValue('var1')
         let result = instance.activate('exp1')
         expect(result).toBe('var1')
-        expect(mockInnerClient.activate).toBeCalledTimes(1)
-        expect(mockInnerClient.activate).toBeCalledWith('exp1', 'user1', { foo: 'bar' })
-        ;(mockInnerClient.activate as jest.Mock).mockReset()
-        ;(mockInnerClient.activate as jest.Mock).mockReturnValue('var2')
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user1', { foo: 'bar' })
+        mockFn.mockReset()
+        mockFn.mockReturnValue('var2')
         result = instance.activate('exp1', 'user2', { bar: 'baz' })
         expect(result).toBe('var2')
         expect(mockInnerClient.activate).toBeCalledTimes(1)
@@ -183,41 +185,42 @@ describe('ReactSDKClient', () => {
       })
 
       it('can use pre-set and override user for track', () => {
+        const mockFn = mockInnerClient.track as jest.Mock
         instance.track('evt1')
-        expect(mockInnerClient.track).toBeCalledTimes(1)
-        expect(mockInnerClient.track).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'evt1',
           'user1',
           { foo: 'bar' },
           undefined,
         )
-        ;(mockInnerClient.track as jest.Mock).mockReset()
+        mockFn.mockReset()
 
         instance.track('evt1', 'user2', { bar: 'baz' })
-        expect(mockInnerClient.track).toBeCalledTimes(1)
-        expect(mockInnerClient.track).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'evt1',
           'user2',
           { bar: 'baz' },
           undefined,
         )
-        ;(mockInnerClient.track as jest.Mock).mockReset()
+        mockFn.mockReset()
 
         // Use pre-set user with event tags
         instance.track('evt1', { tagKey: 'tagVal' })
-        expect(mockInnerClient.track).toBeCalledTimes(1)
-        expect(mockInnerClient.track).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'evt1',
           'user1',
           { foo: 'bar' },
           { tagKey: 'tagVal' },
         )
-        ;(mockInnerClient.track as jest.Mock).mockReset()
+        mockFn.mockReset()
 
         // Use overrides with event tags
         instance.track('evt1', 'user3', { bla: 'bla' }, { tagKey: 'tagVal' })
-        expect(mockInnerClient.track).toBeCalledTimes(1)
-        expect(mockInnerClient.track).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'evt1',
           'user3',
           { bla: 'bla' },
@@ -226,81 +229,85 @@ describe('ReactSDKClient', () => {
       })
 
       it('can use pre-set and override user for isFeatureEnabled', () => {
-        ;(mockInnerClient.isFeatureEnabled as jest.Mock).mockReturnValue(true)
+        const mockFn = mockInnerClient.isFeatureEnabled as jest.Mock
+        mockFn.mockReturnValue(true)
         let result = instance.isFeatureEnabled('feat1')
         expect(result).toBe(true)
-        expect(mockInnerClient.isFeatureEnabled).toBeCalledTimes(1)
-        expect(mockInnerClient.isFeatureEnabled).toBeCalledWith('feat1', 'user1', {
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('feat1', 'user1', {
           foo: 'bar',
         })
-        ;(mockInnerClient.isFeatureEnabled as jest.Mock).mockReset()
-        ;(mockInnerClient.isFeatureEnabled as jest.Mock).mockReturnValue(false)
+        mockFn.mockReset()
+        mockFn.mockReturnValue(false)
         result = instance.isFeatureEnabled('feat1', 'user2', { bar: 'baz' })
         expect(result).toBe(false)
-        expect(mockInnerClient.isFeatureEnabled).toBeCalledTimes(1)
-        expect(mockInnerClient.isFeatureEnabled).toBeCalledWith('feat1', 'user2', {
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('feat1', 'user2', {
           bar: 'baz',
         })
       })
 
       it('can use pre-set and override user for getEnabledFeatures', () => {
-        ;(mockInnerClient.getEnabledFeatures as jest.Mock).mockReturnValue(['feat1'])
+        const mockFn = mockInnerClient.getEnabledFeatures as jest.Mock
+        mockFn.mockReturnValue(['feat1'])
         let result = instance.getEnabledFeatures()
         expect(result).toEqual(['feat1'])
-        expect(mockInnerClient.getEnabledFeatures).toBeCalledTimes(1)
-        expect(mockInnerClient.getEnabledFeatures).toBeCalledWith('user1', {
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('user1', {
           foo: 'bar',
         })
-        ;(mockInnerClient.getEnabledFeatures as jest.Mock).mockReset()
-        ;(mockInnerClient.getEnabledFeatures as jest.Mock).mockReturnValue([
+        mockFn.mockReset()
+        mockFn.mockReturnValue([
           'feat1',
           'feat2',
         ])
         result = instance.getEnabledFeatures('user2', { bar: 'baz' })
         expect(result).toEqual(['feat1', 'feat2'])
-        expect(mockInnerClient.getEnabledFeatures).toBeCalledTimes(1)
-        expect(mockInnerClient.getEnabledFeatures).toBeCalledWith('user2', {
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('user2', {
           bar: 'baz',
         })
       })
 
       it('can use pre-set and override user for getVariation', () => {
-        ;(mockInnerClient.getVariation as jest.Mock).mockReturnValue('var1')
+        const mockFn =  mockInnerClient.getVariation as jest.Mock
+        mockFn.mockReturnValue('var1')
         let result = instance.getVariation('exp1')
         expect(result).toEqual('var1')
-        expect(mockInnerClient.getVariation).toBeCalledTimes(1)
-        expect(mockInnerClient.getVariation).toBeCalledWith('exp1', 'user1', {
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user1', {
           foo: 'bar',
         })
-        ;(mockInnerClient.getVariation as jest.Mock).mockReset()
-        ;(mockInnerClient.getVariation as jest.Mock).mockReturnValue('var2')
+        mockFn.mockReset()
+        mockFn.mockReturnValue('var2')
         result = instance.getVariation('exp1', 'user2', { bar: 'baz' })
         expect(result).toEqual('var2')
-        expect(mockInnerClient.getVariation).toBeCalledTimes(1)
-        expect(mockInnerClient.getVariation).toBeCalledWith('exp1', 'user2', {
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user2', {
           bar: 'baz',
         })
       })
 
       it('can use pre-set and override user for getFeatureVariableBoolean', () => {
-        ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(false)
+        const mockFn = mockInnerClient.getFeatureVariableBoolean as jest.Mock
+        mockFn.mockReturnValue(false)
         let result = instance.getFeatureVariableBoolean('feat1', 'bvar1')
         expect(result).toBe(false)
-        expect(mockInnerClient.getFeatureVariableBoolean).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableBoolean).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'bvar1',
           'user1',
           { foo: 'bar' },
         )
-        ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReset()
-        ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(true)
+        mockFn.mockReset()
+        mockFn.mockReturnValue(true)
         result = instance.getFeatureVariableBoolean('feat1', 'bvar1', 'user2', {
           bar: 'baz',
         })
         expect(result).toBe(true)
-        expect(mockInnerClient.getFeatureVariableBoolean).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableBoolean).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'bvar1',
           'user2',
@@ -309,28 +316,29 @@ describe('ReactSDKClient', () => {
       })
 
       it('can use pre-set and override user for getFeatureVariableString', () => {
-        ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(
+        const mockFn = mockInnerClient.getFeatureVariableString as jest.Mock
+        mockFn.mockReturnValue(
           'varval1',
         )
         let result = instance.getFeatureVariableString('feat1', 'svar1')
         expect(result).toBe('varval1')
-        expect(mockInnerClient.getFeatureVariableString).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableString).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'svar1',
           'user1',
           { foo: 'bar' },
         )
-        ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReset()
-        ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(
+        mockFn.mockReset()
+        mockFn.mockReturnValue(
           'varval2',
         )
         result = instance.getFeatureVariableString('feat1', 'svar1', 'user2', {
           bar: 'baz',
         })
         expect(result).toBe('varval2')
-        expect(mockInnerClient.getFeatureVariableString).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableString).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'svar1',
           'user2',
@@ -339,24 +347,25 @@ describe('ReactSDKClient', () => {
       })
 
       it('can use pre-set and override user for getFeatureVariableInteger', () => {
-        ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReturnValue(15)
+        const mockFn = mockInnerClient.getFeatureVariableInteger as jest.Mock
+        mockFn.mockReturnValue(15)
         let result = instance.getFeatureVariableInteger('feat1', 'ivar1')
         expect(result).toBe(15)
-        expect(mockInnerClient.getFeatureVariableInteger).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableInteger).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'ivar1',
           'user1',
           { foo: 'bar' },
         )
-        ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReset()
-        ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReturnValue(-20)
+        mockFn.mockReset()
+        mockFn.mockReturnValue(-20)
         result = instance.getFeatureVariableInteger('feat1', 'ivar1', 'user2', {
           bar: 'baz',
         })
         expect(result).toBe(-20)
-        expect(mockInnerClient.getFeatureVariableInteger).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableInteger).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'ivar1',
           'user2',
@@ -365,18 +374,19 @@ describe('ReactSDKClient', () => {
       })
 
       it('can use pre-set and override user for getFeatureVariableDouble', () => {
-        ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReturnValue(15.5)
+        const mockFn = mockInnerClient.getFeatureVariableDouble as jest.Mock
+        mockFn.mockReturnValue(15.5)
         let result = instance.getFeatureVariableDouble('feat1', 'dvar1')
         expect(result).toBe(15.5)
-        expect(mockInnerClient.getFeatureVariableDouble).toBeCalledTimes(1)
-        expect(mockInnerClient.getFeatureVariableDouble).toBeCalledWith(
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith(
           'feat1',
           'dvar1',
           'user1',
           { foo: 'bar' },
         )
-        ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReset()
-        ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReturnValue(-20.2)
+        mockFn.mockReset()
+        mockFn.mockReturnValue(-20.2)
         result = instance.getFeatureVariableDouble('feat1', 'dvar1', 'user2', {
           bar: 'baz',
         })
@@ -391,49 +401,53 @@ describe('ReactSDKClient', () => {
       })
 
       it('can use pre-set and override user for setForcedVariation', () => {
-        ;(mockInnerClient.setForcedVariation as jest.Mock).mockReturnValue(true)
+        const mockFn = mockInnerClient.setForcedVariation as jest.Mock
+        mockFn.mockReturnValue(true)
         let result = instance.setForcedVariation('exp1', 'var1')
         expect(result).toBe(true)
-        expect(mockInnerClient.setForcedVariation).toBeCalledTimes(1)
-        expect(mockInnerClient.setForcedVariation).toBeCalledWith('exp1', 'user1', 'var1')
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user1', 'var1')
 
-        ;(mockInnerClient.setForcedVariation as jest.Mock).mockReset()
-        ;(mockInnerClient.setForcedVariation as jest.Mock).mockReturnValue(false)
+        mockFn.mockReset()
+        mockFn.mockReturnValue(false)
         result = instance.setForcedVariation('exp1', 'user2', 'var1')
         expect(result).toBe(false)
-        expect(mockInnerClient.setForcedVariation).toBeCalledTimes(1)
-        expect(mockInnerClient.setForcedVariation).toBeCalledWith('exp1', 'user2', 'var1')
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user2', 'var1')
       })
 
       it('can use pre-set and override user for getForcedVariation', () => {
-        ;(mockInnerClient.getForcedVariation as jest.Mock).mockReturnValue('var1')
+        const mockFn = mockInnerClient.getForcedVariation as jest.Mock
+        mockFn.mockReturnValue('var1')
         let result = instance.getForcedVariation('exp1')
         expect(result).toBe('var1')
-        expect(mockInnerClient.getForcedVariation).toBeCalledTimes(1)
-        expect(mockInnerClient.getForcedVariation).toBeCalledWith('exp1', 'user1')
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user1')
 
-        ;(mockInnerClient.getForcedVariation as jest.Mock).mockReset()
-        ;(mockInnerClient.getForcedVariation as jest.Mock).mockReturnValue(null)
+        mockFn.mockReset()
+        mockFn.mockReturnValue(null)
         result = instance.getForcedVariation('exp1', 'user2')
         expect(result).toBe(null)
-        expect(mockInnerClient.getForcedVariation).toBeCalledTimes(1)
-        expect(mockInnerClient.getForcedVariation).toBeCalledWith('exp1', 'user2')
+        expect(mockFn).toBeCalledTimes(1)
+        expect(mockFn).toBeCalledWith('exp1', 'user2')
       })
     })
 
     describe('getFeatureVariables', () => {
       it('returns an empty object when the inner SDK returns no variables', () => {
-        ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(null)
-        ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(null)
-        ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReturnValue(null)
-        ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReturnValue(null)
+        const anyClient = mockInnerClient as any
+        anyClient.getFeatureVariableBoolean.mockReturnValue(null)
+        anyClient.getFeatureVariableString.mockReturnValue(null)
+        anyClient.getFeatureVariableInteger.mockReturnValue(null)
+        anyClient.getFeatureVariableDouble.mockReturnValue(null)
         const instance = createInstance(config)
         const result = instance.getFeatureVariables('feat1')
         expect(result).toEqual({})
       })
 
       it('returns an object with variables of all types returned from the inner sdk ', () => {
-        ;(mockInnerClient as any).projectConfigManager = {
+        const anyClient = mockInnerClient as any
+        anyClient.projectConfigManager = {
           getConfig() {
             return {
               featureKeyMap: {
@@ -461,12 +475,12 @@ describe('ReactSDKClient', () => {
             }
           },
         }
-        ;(mockInnerClient.getFeatureVariableBoolean as jest.Mock).mockReturnValue(true)
-        ;(mockInnerClient.getFeatureVariableString as jest.Mock).mockReturnValue(
+        anyClient.getFeatureVariableBoolean.mockReturnValue(true)
+        anyClient.getFeatureVariableString.mockReturnValue(
           'whatsup',
         )
-        ;(mockInnerClient.getFeatureVariableInteger as jest.Mock).mockReturnValue(10)
-        ;(mockInnerClient.getFeatureVariableDouble as jest.Mock).mockReturnValue(-10.5)
+        anyClient.getFeatureVariableInteger.mockReturnValue(10)
+        anyClient.getFeatureVariableDouble.mockReturnValue(-10.5)
         const instance = createInstance(config)
         instance.setUser({
           id: 'user1123',
