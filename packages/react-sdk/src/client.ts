@@ -25,7 +25,7 @@ export type VariableValuesObject = {
 
 type DisposeFn = () => void
 
-type OnUserUpdateHandler = (userInfo: UserInfo) => void
+type OnUserUpdateHandler = (userInfo: UserContext) => void
 
 export type OnReadyResult = {
   success: boolean
@@ -33,7 +33,7 @@ export type OnReadyResult = {
 }
 
 export interface ReactSDKClient extends optimizely.Client {
-  user: UserInfo
+  user: UserContext
 
   onReady(opts?: { timeout?: number }): Promise<any>
   setUser(userInfo: { id: string; attributes?: { [key: string]: any } }): void
@@ -112,7 +112,7 @@ export interface ReactSDKClient extends optimizely.Client {
   getForcedVariation(experiment: string, overrideUserId?: string): string | null
 }
 
-type UserInfo = {
+type UserContext = {
   id: string | null
   attributes: optimizely.UserAttributes
 }
@@ -121,13 +121,13 @@ export const DEFAULT_ON_READY_TIMEOUT = 5000
 
 class OptimizelyReactSDKClient implements ReactSDKClient {
   public initialConfig: optimizely.Config
-  public user: UserInfo = {
+  public user: UserContext = {
     id: null,
     attributes: {},
   }
   public notificationCenter: optimizely.NotificationCenter
 
-  private userPromiseResovler: (user: UserInfo) => void
+  private userPromiseResovler: (user: UserContext) => void
   private userPromise: Promise<OnReadyResult>
   private isUserPromiseResolved: boolean = false
   private onUserUpdateHandlers: OnUserUpdateHandler[] = []
@@ -212,9 +212,10 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   }
 
   /**
+   * Buckets visitor and sends impression event to Optimizely
    * @param {string} experimentKey
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
    * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
@@ -223,26 +224,22 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): string | null {
-    const [userId, userAttributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       logger.info(
         'Not activating experiment "%s" because userId is not set',
         experimentKey,
       )
       return null
     }
-    return this._client.activate(experimentKey, userId, userAttributes)
+    return this._client.activate(experimentKey, user.id, user.attributes)
   }
 
   /**
-   *
-   *
+   * Gets variation where visitor will be bucketed
    * @param {string} experimentKey
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
    * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
@@ -251,55 +248,54 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): string | null {
-    const [userId, userAttributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       logger.info(
         'getVariation returned null for experiment "%s" because userId is not set',
         experimentKey,
       )
       return null
     }
-    return this._client.getVariation(experimentKey, userId, userAttributes)
+    return this._client.getVariation(experimentKey, user.id, user.attributes)
   }
 
-  track(
+  /**
+   * Sends conversion event to Optimizely
+   * @param {string} eventKey
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
+   * @param {optimizely.EventTags} [eventTags]
+   * @memberof OptimizelyReactSDKClient
+   */
+  public track(
     eventKey: string,
     overrideUserId?: string | optimizely.EventTags,
     overrideAttributes?: optimizely.UserAttributes,
-    eventTags?:optimizely.EventTags,
+    eventTags?: optimizely.EventTags,
   ) {
     if (typeof overrideUserId !== 'undefined' && typeof overrideUserId !== 'string') {
       eventTags = overrideUserId
       overrideUserId = undefined
       overrideAttributes = undefined
     }
-    const [userId, attributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
 
-    if (userId === null) {
+    if (user.id === null) {
       logger.info(
         'track for event "%s" not being sent because userId is not set',
         eventKey,
       )
-      // TODO log
       return
     }
 
-    return this._client.track(eventKey, userId, attributes, eventTags)
+    return this._client.track(eventKey, user.id, user.attributes, eventTags)
   }
 
   /**
-   * Note: in the case where the feature isnt in the datafile or the datafile hasnt been
-   * loaded, this will return `false`
-   *
+   * Returns true if the feature is enabled for the given user
    * @param {string} feature
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
    * @returns {boolean}
    * @memberof OptimizelyReactSDKClient
    */
@@ -308,26 +304,22 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): boolean {
-    const [userId, userAttributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       logger.info(
         'isFeatureEnabled returning false for feature "%s" because userId is not set',
         feature,
       )
       return false
     }
-    return this._client.isFeatureEnabled(feature, userId, userAttributes)
+    return this._client.isFeatureEnabled(feature, user.id, user.attributes)
   }
 
   /**
    * Get all variables for a feature, regardless of the feature being enabled/disabled
-   *
    * @param {string} feature
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
    * @returns {VariableValuesObject}
    * @memberof OptimizelyReactSDKClient
    */
@@ -336,10 +328,8 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): VariableValuesObject {
-    const [userId, userAttributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    const userId = user.id
     if (userId === null) {
       logger.info(
         'getFeatureVariables returning `{}` for feature "%s" because userId is not set',
@@ -347,6 +337,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       )
       return {}
     }
+    const userAttributes = user.attributes
     let variableObj: { [key: string]: any } = {}
     const config = (this._client as any).projectConfigManager.getConfig()
     if (!config) {
@@ -404,10 +395,12 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   }
 
   /**
+   * Returns value for the given string variable attached to the given feature
+   * flag
    * @param {string} feature
    * @param {string} variable
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
    * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
@@ -417,22 +410,26 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): string | null {
-    const [userId, attributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       return null
     }
-    return this._client.getFeatureVariableString(feature, variable, userId, attributes)
+    return this._client.getFeatureVariableString(
+      feature,
+      variable,
+      user.id,
+      user.attributes,
+    )
   }
 
   /**
+   * Returns value for the given boolean variable attached to the given feature
+   * flag
    * @param {string} feature
    * @param {string} variable
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
-   * @returns {(boolean | null)}
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
+   * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableBoolean(
@@ -441,22 +438,26 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): boolean | null {
-    const [userId, attributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       return null
     }
-    return this._client.getFeatureVariableBoolean(feature, variable, userId, attributes)
+    return this._client.getFeatureVariableBoolean(
+      feature,
+      variable,
+      user.id,
+      user.attributes,
+    )
   }
 
   /**
+   * Returns value for the given integer variable attached to the given feature
+   * flag
    * @param {string} feature
    * @param {string} variable
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
-   * @returns {(number | null)}
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
+   * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableInteger(
@@ -465,22 +466,26 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): number | null {
-    const [userId, attributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       return null
     }
-    return this._client.getFeatureVariableInteger(feature, variable, userId, attributes)
+    return this._client.getFeatureVariableInteger(
+      feature,
+      variable,
+      user.id,
+      user.attributes,
+    )
   }
 
   /**
+   * Returns value for the given double variable attached to the given feature
+   * flag
    * @param {string} feature
    * @param {string} variable
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
-   * @returns {(number | null)}
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
+   * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableDouble(
@@ -489,21 +494,22 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): number | null {
-    const [userId, attributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       return null
     }
-    return this._client.getFeatureVariableDouble(feature, variable, userId, attributes)
+    return this._client.getFeatureVariableDouble(
+      feature,
+      variable,
+      user.id,
+      user.attributes,
+    )
   }
 
   /**
    * Get an array of all enabled features
-   *
-   * @param {string} userId
-   * @param {optimizely.UserAttributes} [attributes]
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideUserId]
    * @returns {Array<string>}
    * @memberof OptimizelyReactSDKClient
    */
@@ -511,34 +517,33 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
   ): Array<string> {
-    const [userId, attributes] = this.getUserIdAndAttributes(
-      overrideUserId,
-      overrideAttributes,
-    )
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
       return []
     }
-    return this._client.getEnabledFeatures(userId, attributes)
+    return this._client.getEnabledFeatures(user.id, user.attributes)
   }
 
   /**
+   * Gets the forced variation for a given user and experiment
    * @param {string} experiment
-   * @param {string} userId
+   * @param {string} [overrideUserId]
    * @returns {(string | null)}
    * @memberof OptimizelyReactSDKClient
    */
   public getForcedVariation(experiment: string, overrideUserId?: string): string | null {
-    const [userId, _] = this.getUserIdAndAttributes(overrideUserId)
-    if (userId === null) {
+    const user = this.getUserContextWithOverrides(overrideUserId)
+    if (user.id === null) {
       return null
     }
-    return this._client.getForcedVariation(experiment, userId)
+    return this._client.getForcedVariation(experiment, user.id)
   }
 
   /**
+   * Force a user into a variation for a given experiment
    * @param {string} experiment
-   * @param {string} userId
-   * @param {string} variationKey
+   * @param {string} overrideUserIdOrVariationKey
+   * @param {string} [variationKey]
    * @returns {boolean}
    * @memberof OptimizelyReactSDKClient
    */
@@ -551,10 +556,9 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     let finalVariationKey: string | null = null
     if (arguments.length === 2) {
       finalVariationKey = overrideUserIdOrVariationKey
-      finalUserId = this.getUserIdAndAttributes()[0]
+      finalUserId = this.getUserContextWithOverrides().id
     } else if (arguments.length === 3) {
-      const res = this.getUserIdAndAttributes(overrideUserIdOrVariationKey)
-      finalUserId = res[0]
+      finalUserId = this.getUserContextWithOverrides(overrideUserIdOrVariationKey).id
       if (variationKey === undefined) {
         // can't have undefined if supplying all 3 arguments
         return false
@@ -568,24 +572,33 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     return this._client.setForcedVariation(experiment, finalUserId, finalVariationKey)
   }
 
+  /**
+   * Cleanup method for killing an running timers and flushing eventQueue
+   */
   public close() {
     return this._client.close()
   }
 
-  public get client(): optimizely.Client  {
+  /**
+   * Provide access to inner optimizely.Client object
+   */
+  public get client(): optimizely.Client {
     return this._client
   }
 
-  protected getUserIdAndAttributes(
+  protected getUserContextWithOverrides(
     overrideUserId?: string,
     overrideAttributes?: optimizely.UserAttributes,
-  ): [string | null, optimizely.UserAttributes] {
+  ): UserContext {
     let finalUserId: string | null =
       overrideUserId === undefined ? this.user.id : overrideUserId
     let finalUserAttributes: optimizely.UserAttributes =
       overrideAttributes === undefined ? this.user.attributes : overrideAttributes
 
-    return [finalUserId, finalUserAttributes]
+    return {
+      id: finalUserId,
+      attributes: finalUserAttributes,
+    }
   }
 }
 
