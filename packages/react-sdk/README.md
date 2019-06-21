@@ -286,7 +286,7 @@ Right now server side rendering is possible with the `js-web-sdk` and `react-sdk
 
 **Caveats**
 
-1. You must download the datafile manually and pass in via the `datafile` option.  Can not use `sdkKey` to automatically download.
+1. You must [download the datafile](https://docs.developers.optimizely.com/full-stack/docs/get-the-datafile) manually and pass in via the `datafile` option.  Can not use `sdkKey` to automatically download.
 
 2. Rendering of components must be completely synchronous (this is true for all server side rendering)
 
