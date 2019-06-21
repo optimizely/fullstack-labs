@@ -138,9 +138,8 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   private dataReadyPromise: Promise<OnReadyResult>
 
   /**
-   * Creates an instance of OptimizelySDKWrapper.
-   * @param {OptimizelySDKWrapperConfig} [config={}]
-   * @memberof OptimizelySDKWrapper
+   * Creates an instance of OptimizelyReactSDKClient.
+   * @param {optimizely.Config} [config={}]
    */
   constructor(config: optimizely.Config) {
     this.initialConfig = config
@@ -217,7 +216,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {(string | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public activate(
     experimentKey: string,
@@ -245,7 +244,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {(string | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getVariation(
     experimentKey: string,
@@ -302,7 +301,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {boolean}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public isFeatureEnabled(
     feature: string,
@@ -330,7 +329,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {VariableValuesObject}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariables(
     featureKey: string,
@@ -410,7 +409,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {(string | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableString(
     feature: string,
@@ -434,7 +433,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {(boolean | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableBoolean(
     feature: string,
@@ -458,7 +457,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {(number | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableInteger(
     feature: string,
@@ -482,7 +481,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {(number | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getFeatureVariableDouble(
     feature: string,
@@ -506,7 +505,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {optimizely.UserAttributes} [attributes]
    * @returns {Array<string>}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getEnabledFeatures(
     overrideUserId?: string,
@@ -526,7 +525,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} experiment
    * @param {string} userId
    * @returns {(string | null)}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public getForcedVariation(experiment: string, overrideUserId?: string): string | null {
     const [userId, _] = this.getUserIdAndAttributes(overrideUserId)
@@ -541,7 +540,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    * @param {string} userId
    * @param {string} variationKey
    * @returns {boolean}
-   * @memberof OptimizelySDKWrapper
+   * @memberof OptimizelyReactSDKClient
    */
   public setForcedVariation(
     experiment: string,
