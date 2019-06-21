@@ -125,8 +125,6 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     id: null,
     attributes: {},
   }
-  public notificationCenter: optimizely.NotificationCenter
-
   private userPromiseResovler: (user: UserContext) => void
   private userPromise: Promise<OnReadyResult>
   private isUserPromiseResolved: boolean = false
@@ -146,7 +144,6 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
 
     this.userPromiseResovler = () => {}
     this._client = optimizely.createInstance(config)
-    this.notificationCenter = this._client.notificationCenter
 
     this.userPromise = new Promise(resolve => {
       this.userPromiseResovler = resolve
@@ -584,6 +581,10 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
    */
   public get client(): optimizely.Client {
     return this._client
+  }
+
+  public get notificationCenter(): optimizely.NotificationCenter {
+    return this._client.notificationCenter
   }
 
   protected getUserContextWithOverrides(
