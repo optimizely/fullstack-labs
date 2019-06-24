@@ -88,10 +88,12 @@ describe('<OptimizelyFeature>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: undefined })
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
       expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
@@ -112,10 +114,12 @@ describe('<OptimizelyFeature>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
       expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
@@ -136,10 +140,12 @@ describe('<OptimizelyFeature>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
       expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
@@ -161,10 +167,12 @@ describe('<OptimizelyFeature>', () => {
         expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
 
         // while it's waiting for onReady()
-        expect(component.text()).toBe(null)
+        expect(component.text()).toBe('')
         resolver.resolve({ sucess: true })
 
         await sleep()
+
+        component.update()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
         expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
@@ -183,6 +191,8 @@ describe('<OptimizelyFeature>', () => {
         )
 
         updateFn()
+
+        component.update()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledTimes(2)
         expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledTimes(2)
@@ -204,10 +214,12 @@ describe('<OptimizelyFeature>', () => {
         expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
 
         // while it's waiting for onReady()
-        expect(component.text()).toBe(null)
+        expect(component.text()).toBe('')
         resolver.resolve({ sucess: true })
 
         await sleep()
+
+        component.update()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
         expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
@@ -224,6 +236,8 @@ describe('<OptimizelyFeature>', () => {
         )
 
         updateFn()
+
+        component.update()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledTimes(2)
         expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledTimes(2)
@@ -247,10 +261,12 @@ describe('<OptimizelyFeature>', () => {
         expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
 
         // while it's waiting for onReady()
-        expect(component.text()).toBe(null)
+        expect(component.text()).toBe('')
         resolver.resolve({ sucess: false, reason: 'fail' })
 
         await sleep()
+
+        component.update()
 
         expect(optimizelyMock.isFeatureEnabled).toHaveBeenCalledWith('feature1')
         expect(optimizelyMock.getFeatureVariables).toHaveBeenCalledWith('feature1')
