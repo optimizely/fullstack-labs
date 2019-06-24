@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 import * as React from 'react'
+import * as optimizely from '@optimizely/optimizely-sdk'
 
 import { OptimizelyContextProvider } from './Context'
-import { ReactSDKClient, UserAttributes, createInstance } from './client'
+import { ReactSDKClient, createInstance } from './client'
 import { areUsersEqual } from './utils';
 
 type UserInfo = {
   id: string
-  attributes?: UserAttributes
+  attributes?: optimizely.UserAttributes
 }
 
 interface OptimizelyProviderProps {
@@ -30,7 +31,7 @@ interface OptimizelyProviderProps {
   isServerSide?: boolean
   user?: Promise<UserInfo> | UserInfo
   userId?: string
-  userAttributes?: UserAttributes
+  userAttributes?: optimizely.UserAttributes
 }
 
 interface OptimizelyProviderState {
@@ -49,7 +50,7 @@ export class OptimizelyProvider extends React.Component<
     // check if user id/attributes are provided as props and set them ReactSDKClient
     let finalUser: {
       id: string
-      attributes: UserAttributes
+      attributes: optimizely.UserAttributes
     } | null = null
 
     if (user) {

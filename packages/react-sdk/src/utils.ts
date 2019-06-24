@@ -1,8 +1,8 @@
-import { UserAttributes } from './client'
+import * as optimizely from '@optimizely/optimizely-sdk'
 
 type User = {
   id: string
-  attributes: UserAttributes
+  attributes: optimizely.UserAttributes
 }
 
 export function areUsersEqual(user1: User, user2: User): boolean {
