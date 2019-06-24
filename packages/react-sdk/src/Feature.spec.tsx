@@ -181,10 +181,12 @@ describe('<OptimizelyFeature>', () => {
         const updateFn = (optimizelyMock.notificationCenter
             .addNotificationListener as jest.Mock).mock.calls[0][1]
           // change the return value of activate
-        ;(optimizelyMock.isFeatureEnabled as jest.Mock).mockImplementationOnce(
+        const mockIFE = optimizelyMock.isFeatureEnabled as jest.Mock
+        mockIFE.mockImplementationOnce(
           () => false,
         )
-        ;(optimizelyMock.getFeatureVariables as jest.Mock).mockImplementationOnce(
+        const mockGFV = optimizelyMock.getFeatureVariables as jest.Mock
+        mockGFV.mockImplementationOnce(
           () => ({
             foo: 'baz',
           }),
@@ -226,10 +228,12 @@ describe('<OptimizelyFeature>', () => {
         expect(component.text()).toBe('true|bar')
 
         const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock.calls[0][0]
-        ;(optimizelyMock.isFeatureEnabled as jest.Mock).mockImplementationOnce(
+        const mockIFE = optimizelyMock.isFeatureEnabled as jest.Mock
+        mockIFE.mockImplementationOnce(
           () => false,
         )
-        ;(optimizelyMock.getFeatureVariables as jest.Mock).mockImplementationOnce(
+        const mockGFV = optimizelyMock.getFeatureVariables as jest.Mock
+        mockGFV.mockImplementationOnce(
           () => ({
             foo: 'baz',
           }),

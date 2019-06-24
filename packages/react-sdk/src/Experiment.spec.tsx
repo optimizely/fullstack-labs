@@ -259,7 +259,8 @@ describe('<OptimizelyExperiment>', () => {
       const updateFn = (optimizelyMock.notificationCenter
           .addNotificationListener as jest.Mock).mock.calls[0][1]
         // change the return value of activate
-      ;(optimizelyMock.activate as jest.Mock).mockImplementationOnce(
+      const mockActivate = optimizelyMock.activate as jest.Mock
+      mockActivate.mockImplementationOnce(
         () => 'newVariation',
       )
 
@@ -298,7 +299,8 @@ describe('<OptimizelyExperiment>', () => {
 
       // capture the onUserUpdate function
       const updateFn = (optimizelyMock.onUserUpdate as jest.Mock).mock.calls[0][0]
-      ;(optimizelyMock.activate as jest.Mock).mockImplementationOnce(
+      const mockActivate = optimizelyMock.activate as jest.Mock
+      mockActivate.mockImplementationOnce(
         () => 'newVariation',
       )
       updateFn()
