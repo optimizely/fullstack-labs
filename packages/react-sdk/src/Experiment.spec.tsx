@@ -85,10 +85,12 @@ describe('<OptimizelyExperiment>', () => {
 
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
       expect(component.text()).toBe(variationKey)
@@ -105,7 +107,7 @@ describe('<OptimizelyExperiment>', () => {
 
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
       await sleep()
@@ -124,7 +126,7 @@ describe('<OptimizelyExperiment>', () => {
 
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
@@ -148,7 +150,7 @@ describe('<OptimizelyExperiment>', () => {
       )
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
@@ -171,7 +173,7 @@ describe('<OptimizelyExperiment>', () => {
       )
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
@@ -196,12 +198,12 @@ describe('<OptimizelyExperiment>', () => {
       )
 
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
 
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
     })
 
     describe('when the onReady() promise return { sucess: false }', () => {
@@ -220,12 +222,12 @@ describe('<OptimizelyExperiment>', () => {
         )
 
         // while it's waiting for onReady()
-        expect(component.text()).toBe(null)
+        expect(component.text()).toBe('')
         resolver.resolve({ success: false, reason: 'fail' })
 
         await sleep()
 
-        expect(component.text()).toBe(null)
+        expect(component.text()).toBe('')
       })
     })
   })
@@ -242,10 +244,12 @@ describe('<OptimizelyExperiment>', () => {
 
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
 
@@ -264,6 +268,8 @@ describe('<OptimizelyExperiment>', () => {
 
       await sleep()
 
+      component.update()
+
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
       expect(component.text()).toBe('newVariation')
     })
@@ -279,10 +285,12 @@ describe('<OptimizelyExperiment>', () => {
 
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
-      expect(component.text()).toBe(null)
+      expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
       await sleep()
+
+      component.update()
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
 
@@ -294,6 +302,9 @@ describe('<OptimizelyExperiment>', () => {
         () => 'newVariation',
       )
       updateFn()
+
+      component.update()
+
       expect(optimizelyMock.activate).toBeCalledTimes(2)
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
