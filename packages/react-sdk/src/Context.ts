@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { OptimizelySDKWrapper } from '@optimizely/js-web-sdk'
 // @ts-ignore
 import { createContext } from 'react-broadcast'
 

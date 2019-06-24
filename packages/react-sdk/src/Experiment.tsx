@@ -15,8 +15,11 @@
  */
 import * as React from 'react'
 import { withOptimizely, WithOptimizelyProps } from './withOptimizely'
-import { VariableValuesObject } from '@optimizely/js-web-sdk'
 import { VariationProps } from './Variation'
+import { VariableValuesObject, OnReadyResult, DEFAULT_ON_READY_TIMEOUT } from './client'
+import * as logging from '@optimizely/js-sdk-logging'
+
+const logger = logging.getLogger('<OptimizelyExperiment>')
 
 export type ChildrenRenderFunction = (
   variableValues: VariableValuesObject,
@@ -27,6 +30,8 @@ type ChildRenderFunction = (variation: string | null) => React.ReactNode
 export interface ExperimentProps extends WithOptimizelyProps {
   // TODO add support for overrideUserId
   experiment: string
+  autoUpdate?: boolean
+  timeout?: number
   children: React.ReactNode | ChildRenderFunction
 }
 
@@ -36,10 +41,15 @@ export interface ExperimentState {
 }
 
 export class Experiment extends React.Component<ExperimentProps, ExperimentState> {
+  private optimizelyNotificationId?: number
+  private unregisterUserListener: () => void = () => {}
+  private autoUpdate: boolean = false
+
   constructor(props: ExperimentProps) {
     super(props)
 
-    const { isServerSide, optimizely, experiment } = props
+    const { autoUpdate, isServerSide, optimizely, experiment } = props
+    this.autoUpdate = !!autoUpdate
 
     if (isServerSide) {
       if (optimizely === null) {
@@ -59,18 +69,92 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
   }
 
   componentDidMount() {
-    const { experiment, optimizely, optimizelyReadyTimeout } = this.props
+    const {
+      experiment,
+      optimizely,
+      optimizelyReadyTimeout,
+      isServerSide,
+      timeout,
+    } = this.props
     if (!optimizely) {
       throw new Error('optimizely prop must be supplied')
     }
+    if (isServerSide) {
+      return
+    }
 
-    optimizely.onReady({ timeout: optimizelyReadyTimeout }).then(() => {
+    // allow overriding of the ready timeout via the `timeout` prop passed to <Experiment />
+    let finalReadyTimeout: number | undefined =
+      timeout !== undefined ? timeout : optimizelyReadyTimeout
+
+    optimizely.onReady({ timeout: finalReadyTimeout }).then((res: OnReadyResult) => {
+      if (res.success) {
+        logger.info('experiment="%s" successfully rendered for user="%s"', experiment, optimizely.user.id)
+      } else {
+        logger.info(
+          'experiment="%s" could not be checked before timeout of %sms, reason="%s" ',
+          experiment,
+          timeout === undefined ? DEFAULT_ON_READY_TIMEOUT : timeout,
+          res.reason || '',
+        )
+      }
+
       const variation = optimizely.activate(experiment)
       this.setState({
         canRender: true,
         variation,
       })
+      if (this.autoUpdate) {
+        this.setupAutoUpdateListeners()
+      }
     })
+  }
+
+  setupAutoUpdateListeners() {
+    const { optimizely, experiment } = this.props
+    if (optimizely === null) {
+      return
+    }
+
+    this.optimizelyNotificationId = optimizely.notificationCenter.addNotificationListener(
+      'OPTIMIZELY_CONFIG_UPDATE',
+      () => {
+        logger.info(
+          'OPTIMIZELY_CONFIG_UPDATE, re-evaluating experiment="%s" for user="%s"',
+          experiment,
+          optimizely.user.id,
+        )
+        const variation = optimizely.activate(experiment)
+        this.setState({
+          variation,
+        })
+      },
+    )
+
+    this.unregisterUserListener = optimizely.onUserUpdate(() => {
+      logger.info(
+        'OPTIMIZELY_CONFIG_UPDATE, re-evaluating experiment="%s" for user="%s"',
+        experiment,
+        optimizely.user.id,
+      )
+      const variation = optimizely.activate(experiment)
+      this.setState({
+        variation,
+      })
+    })
+  }
+
+  componentWillUnmount() {
+    const { optimizely, isServerSide } = this.props
+    if (isServerSide || !this.autoUpdate) {
+      return
+    }
+    if (optimizely && this.optimizelyNotificationId) {
+      optimizely.notificationCenter.removeNotificationListener(
+        this.optimizelyNotificationId,
+      )
+    }
+    this.unregisterUserListener()
   }
 
   render() {

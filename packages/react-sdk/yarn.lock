@@ -48,24 +48,6 @@
   dependencies:
     uuid "^3.3.2"
 
-"@optimizely/js-web-sdk@3.0.0-beta1":
-  version "3.0.0-beta1"
-  resolved "https://registry.yarnpkg.com/@optimizely/js-web-sdk/-/js-web-sdk-3.0.0-beta1.tgz#d27ea1eaea9fc99abc759c96b164a9f5e4a130f1"
-  integrity sha512-t9TKY34m4mJLMlANTvDP37p3oDmpQ5InCWVq0l5J494IQuaqkSuYz19mt7gY8O2pFzRVvhKn0jPhQw4D2ZS7Fw==
-  dependencies:
-    "@optimizely/optimizely-sdk" "3.0.0-rc2"
-
-"@optimizely/optimizely-sdk@3.0.0-rc2":
-  version "3.0.0-rc2"
-  resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.0.0-rc2.tgz#0ef0074903ce69747de2e53d241b57619f4f2d5b"
-  integrity sha512-0JP2iQW8CzuNp6qKy/Zr23KCfgmEP1ChXQar6AeDN4jMw/f5HdmD+wSRmSW9XtKSMi/tLgQvCfcKwpVq5vtATQ==
-  dependencies:
-    json-schema "^0.2.3"
-    lodash "^4.0.0"
-    murmurhash "0.0.2"
-    sprintf-js "^1.1.1"
-    uuid "^3.3.2"
-
 "@optimizely/optimizely-sdk@3.2.0":
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.2.0.tgz#5a8aeff7501e4567831597f2e916ce001377d47c"
@@ -3869,11 +3851,6 @@ split-string@^3.0.1, split-string@^3.0.2:
   integrity sha512-NzNVhJDYpwceVVii8/Hu6DKfD2G+NrQHlS/V/qgv763EYudVwEcMQNxd2lh+0VrUByXN/oJkl5grOhYWvQUYiw==
   dependencies:
     extend-shallow "^3.0.0"
-
-sprintf-js@^1.1.1:
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
-  integrity sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==
 
 sprintf-js@~1.0.2:
   version "1.0.3"
