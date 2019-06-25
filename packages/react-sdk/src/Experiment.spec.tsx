@@ -19,7 +19,7 @@ import * as Enzyme from 'enzyme'
 import * as Adapter from 'enzyme-adapter-react-16'
 Enzyme.configure({ adapter: new Adapter() })
 
-import { Experiment, OptimizelyExperiment } from './Experiment'
+import { OptimizelyExperiment } from './Experiment'
 
 import { mount } from 'enzyme'
 import { OptimizelyProvider } from './Provider'
@@ -183,7 +183,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('default variation')
     })
 
-    it('should render null when no default or matching variation is provided', async () => {
+    it('should render an empty string when no default or matching variation is provided', async () => {
       const component = mount(
         <OptimizelyProvider optimizely={optimizelyMock}>
           <OptimizelyExperiment experiment="experiment1">

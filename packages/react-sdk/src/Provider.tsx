@@ -17,7 +17,7 @@ import * as React from 'react'
 import * as optimizely from '@optimizely/optimizely-sdk'
 
 import { OptimizelyContextProvider } from './Context'
-import { ReactSDKClient, createInstance } from './client'
+import { ReactSDKClient } from './client'
 import { areUsersEqual } from './utils';
 
 type UserInfo = {
