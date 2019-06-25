@@ -132,7 +132,7 @@ class FeatureComponent extends React.Component<FeatureProps, FeatureState> {
     )
 
     this.unregisterUserListener = optimizely.onUserUpdate(() => {
-      logger.info('OPTIMIZELY_CONFIG_UPDATE, re-evaluating feature="%s" for user="%s"', feature, optimizely.user.id)
+      logger.info('User update, re-evaluating feature="%s" for user="%s"', feature, optimizely.user.id)
       const isEnabled = optimizely.isFeatureEnabled(feature)
       const variables = optimizely.getFeatureVariables(feature)
       this.setState({

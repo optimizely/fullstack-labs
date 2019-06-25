@@ -15,10 +15,13 @@
  */
 import * as React from 'react'
 import * as optimizely from '@optimizely/optimizely-sdk'
+import { getLogger } from '@optimizely/js-sdk-logging'
 
 import { OptimizelyContextProvider } from './Context'
 import { ReactSDKClient } from './client'
 import { areUsersEqual } from './utils';
+
+const logger = getLogger('<OptimizelyProvider>')
 
 type UserInfo = {
   id: string
@@ -70,7 +73,7 @@ export class OptimizelyProvider extends React.Component<
         attributes: userAttributes || {},
       }
       // deprecation warning
-      console.warn(
+      logger.warn(
         'Passing userId and userAttributes as props is deprecated, please switch to using `user` prop',
       )
     }

@@ -133,7 +133,7 @@ export class Experiment extends React.Component<ExperimentProps, ExperimentState
 
     this.unregisterUserListener = optimizely.onUserUpdate(() => {
       logger.info(
-        'OPTIMIZELY_CONFIG_UPDATE, re-evaluating experiment="%s" for user="%s"',
+        'User update, re-evaluating experiment="%s" for user="%s"',
         experiment,
         optimizely.user.id,
       )
