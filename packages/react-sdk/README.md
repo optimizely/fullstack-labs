@@ -23,14 +23,14 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ```jsx
 import {
+  createInstance,
   OptimizelyProvider,
   OptimizelyExperiment,
   OptimizelyVariation,
   OptimizelyFeature,
 } from '@optimizely/react-sdk'
-import * as optimizelySDK from '@optimizely/js-web-sdk'
 
-const optimizely = optimizelySDK.createInstance({
+const optimizely = createInstance({
   sdkKey: 'your-optimizely-sdk-key',
 })
 
@@ -75,33 +75,44 @@ class App extends React.Component {
 
 # Installation
 
-To use the `ReactSDK` components, you must use the [`@optimizely/js-web-sdk`](../js-web-sdk/), which is an API-compatible SDK wrapper built on top of the existing `@optimizely/javascript-sdk`. `@optimizely/js-web-sdk` adds API methods to enable better functionality (asynchronous loading and render blocking) with the ReactSDK.
-
 ```
-npm install @optimizely/js-web-sdk @optimizely/react-sdk
+npm install @optimizely/react-sdk
 ```
 
 # Usage
 
+## Creating the `ReactSDKClient`
+
+The `ReactSDKClient` client created via `createInstance` is the programmatic API to evaluating features and experiments and tracking events. The `ReactSDKClient` is what powers the rest of the ReactSDK internally.
+
+```jsx
+import { OptimizelyProvider, createInstance } from '@optimizely/react-sdk'
+
+const optimizely = createInstance({
+  datafile: window.datafile,
+})
+```
+
+
 ## `<OptimizelyProvider>`
 
-Required at the root level. Leverages React’s `Context` API to allow access to the OptimizelySDKWrapper to components like `<OptimizelyFeature>` and `<OptimizelyExperiment>`.
+Required at the root level. Leverages React’s `Context` API to allow access to the `ReactSDKClient` to components like `<OptimizelyFeature>` and `<OptimizelyExperiment>`.
 
 *props*
-* `optimizely : OptimizelySDK` Instance of the OptimizelySDK from `@optimizely/js-web-sdk`
+* `optimizely : ReactSDKClient` created from `createInstance`
 * `userId : String` userId to be passed to the SDK for every feature flag, A/B test, or `track` call
 * `userAttributes : Object` (optional) userAttributes passed for every feature flag, A/B test, or `track` call
 * `timeout : Number` (optional) The amount of time for OptimizelyExperiment and OptimizelyFeature components to render `null` before resolving
+* `isServerSide : Boolean` (optional) must pass `true` here for server side rendering
 
 ### Load the datafile synchronously
 
 Synchronous loading is the preferred method to ensure that Optimizely is always ready and doesn't add any delay or asynchronous complexity to your application.
 
 ```jsx
-import { OptimizelyProvider } from '@optimizely/react-sdk'
-import * as optimizelySDK from '@optimizely/js-web-sdk'
+import { OptimizelyProvider, createInstance } from '@optimizely/react-sdk'
 
-const optimizely = optimizelySDK.createInstance({
+const optimizely = createInstance({
   datafile: window.datafile,
 })
 
@@ -118,13 +129,12 @@ class AppWrapper extends React.Component {
 
 ### Load the datafile asynchronously
 
-If you don't have the datafile downloaded, the `js-web-sdk` can fetch the datafile for you. However, instead of waiting for the datafile to fetch before you render your app, you can immediately render your app and provide a `timeout` option to `<OptimizelyProvider optimizely={optimizely} timeout={200}>`. This will block rendering of `<OptimizelyExperiment>` and `<OptimizelyFeature>` components until the datafile loads or the timeout is up (in this case, `variation` is `null` and `isFeatureEnabled` is `false`).
+If you don't have the datafile downloaded, the `ReactSDKClient` can fetch the datafile for you. However, instead of waiting for the datafile to fetch before you render your app, you can immediately render your app and provide a `timeout` option to `<OptimizelyProvider optimizely={optimizely} timeout={200}>`. This will block rendering of `<OptimizelyExperiment>` and `<OptimizelyFeature>` components until the datafile loads or the timeout is up (in this case, `variation` is `null` and `isFeatureEnabled` is `false`).
 
 ```jsx
-import { OptimizelyProvider } from '@optimizely/react-sdk'
-import * as optimizelySDK from '@optimizely/js-web-sdk'
+import { OptimizelyProvider, createInstance } from '@optimizely/react-sdk'
 
-const optimizely = optimizelySDK.createInstance({
+const optimizely = createInstance({
   sdkKey: 'your-optimizely-sdk-key', // Optimizely environment key
 })
 
@@ -231,7 +241,7 @@ This kind of targeted rollout or experiment is used when running a beta. For mor
 
 ### Programmatic access inside component
 
-Any component under the `<OptimizelyProvider>` can access the Optimizely `js-web-sdk` via the higher-order component (HoC) `withOptimizely`.
+Any component under the `<OptimizelyProvider>` can access the Optimizely `ReactSDKClient` via the higher-order component (HoC) `withOptimizely`.
 
 ```jsx
 import { withOptimizely } from '@optimizely/react-sdk'
@@ -282,11 +292,11 @@ const WrappedSignupButton = withOptimizely(SignupButton)
 
 
 ## Server Side Rendering
-Right now server side rendering is possible with the `js-web-sdk` and `react-sdk` with a few caveats.
+Right now server side rendering is possible with a few caveats.
 
 **Caveats**
 
-1. You must [download the datafile](https://docs.developers.optimizely.com/full-stack/docs/get-the-datafile) manually and pass in via the `datafile` option.  Can not use `sdkKey` to automatically download.
+1. You must download the datafile manually and pass in via the `datafile` option.  Can not use `sdkKey` to automatically download.
 
 2. Rendering of components must be completely synchronous (this is true for all server side rendering)
 
@@ -309,8 +319,8 @@ All other Optimizely components, such as `<OptimizelyFeature>` and `<OptimizelyE
 import * as React from 'react'
 import * as ReactDOMServer from 'react-dom/server'
 
-import * as optimizelySDK from '@optimizely/js-web-sdk'
 import {
+  createInstance,
   OptimizelyProvider,
   OptimizelyFeature,
   OptimizelyExperiment,
@@ -324,7 +334,7 @@ async function main() {
     'https://cdn.optimizely.com/datafiles/BsSyVRsUbE3ExgGCJ9w1to.json',
   )
   const datafile = await resp.json()
-  const optimizely = optimizelySDK.createInstance({
+  const optimizely = createInstance({
     datafile,
   })
 
