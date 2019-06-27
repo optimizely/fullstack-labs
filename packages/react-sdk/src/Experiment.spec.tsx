@@ -26,14 +26,6 @@ import { OptimizelyProvider } from './Provider'
 import { ReactSDKClient } from './client'
 import { OptimizelyVariation } from './Variation'
 
-async function sleep(timeout = 0): Promise<{}> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve()
-    }, timeout)
-  })
-}
-
 describe('<OptimizelyExperiment>', () => {
   const variationKey = 'variationResult'
   let resolver: any
@@ -88,7 +80,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -110,7 +102,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
     })
@@ -129,7 +121,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       expect(optimizelyMock.activate).toHaveBeenCalledWith('experiment1')
     })
@@ -153,7 +145,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -176,7 +168,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -201,7 +193,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       expect(component.text()).toBe('')
     })
@@ -225,7 +217,7 @@ describe('<OptimizelyExperiment>', () => {
         expect(component.text()).toBe('')
         resolver.resolve({ success: false, reason: 'fail' })
 
-        await sleep()
+        await optimizelyMock.onReady()
 
         expect(component.text()).toBe('')
       })
@@ -247,7 +239,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -266,8 +258,6 @@ describe('<OptimizelyExperiment>', () => {
 
       updateFn()
       expect(optimizelyMock.activate).toBeCalledTimes(2)
-
-      await sleep()
 
       component.update()
 
@@ -289,7 +279,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 

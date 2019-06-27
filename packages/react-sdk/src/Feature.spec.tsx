@@ -23,14 +23,6 @@ import { OptimizelyProvider } from './Provider'
 import { ReactSDKClient } from './client'
 import { OptimizelyFeature } from './Feature'
 
-async function sleep(timeout = 0): Promise<{}> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve()
-    }, timeout)
-  })
-}
-
 describe('<OptimizelyFeature>', () => {
   let resolver: any
   let optimizelyMock: ReactSDKClient
@@ -91,7 +83,7 @@ describe('<OptimizelyFeature>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ success: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -117,7 +109,7 @@ describe('<OptimizelyFeature>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -143,7 +135,7 @@ describe('<OptimizelyFeature>', () => {
       expect(component.text()).toBe('')
       resolver.resolve({ sucess: true })
 
-      await sleep()
+      await optimizelyMock.onReady()
 
       component.update()
 
@@ -170,7 +162,7 @@ describe('<OptimizelyFeature>', () => {
         expect(component.text()).toBe('')
         resolver.resolve({ sucess: true })
 
-        await sleep()
+        await optimizelyMock.onReady()
 
         component.update()
 
@@ -219,7 +211,7 @@ describe('<OptimizelyFeature>', () => {
         expect(component.text()).toBe('')
         resolver.resolve({ sucess: true })
 
-        await sleep()
+        await optimizelyMock.onReady()
 
         component.update()
 
@@ -268,7 +260,7 @@ describe('<OptimizelyFeature>', () => {
         expect(component.text()).toBe('')
         resolver.resolve({ sucess: false, reason: 'fail' })
 
-        await sleep()
+        await optimizelyMock.onReady()
 
         component.update()
 

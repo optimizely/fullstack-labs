@@ -22,17 +22,8 @@ Enzyme.configure({ adapter: new Adapter() })
 
 import { mount } from 'enzyme'
 import { OptimizelyProvider } from './Provider'
-import * as optimizely from '@optimizely/optimizely-sdk'
 import { withOptimizely } from './withOptimizely'
 import { ReactSDKClient } from './client'
-
-async function sleep(timeout = 0): Promise<{}> {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve()
-    }, timeout)
-  })
-}
 
 type TestProps = {
   optimizely: ReactSDKClient
