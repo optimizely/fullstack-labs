@@ -12,7 +12,11 @@ const {
 class App extends Component {
   render() {
     return (
-      <OptimizelyProvider optimizely={this.props.optimizely} timeout={200} userId='jordan'>
+      <OptimizelyProvider
+        optimizely={this.props.optimizely}
+        timeout={200}
+        userId="jordan"
+      >
         <div>
           <h1>Test app: React 15</h1>
           <OptimizelyFeature feature="feature1">
@@ -33,9 +37,15 @@ class App extends Component {
           <h2>experiment (/w variation component): cat_size</h2>
 
           <OptimizelyExperiment experiment="cat_size">
-            <OptimizelyVariation variation="small"><p>small</p></OptimizelyVariation>
-            <OptimizelyVariation variation="large"><p>large</p></OptimizelyVariation>
-            <OptimizelyVariation default><p>default</p></OptimizelyVariation>
+            <OptimizelyVariation variation="small">
+              <p>small</p>
+            </OptimizelyVariation>
+            <OptimizelyVariation variation="large">
+              <p>large</p>
+            </OptimizelyVariation>
+            <OptimizelyVariation default>
+              <p>default</p>
+            </OptimizelyVariation>
           </OptimizelyExperiment>
         </div>
       </OptimizelyProvider>
