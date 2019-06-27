@@ -8,7 +8,7 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 
 ### Features
 
-- Automatic datafile downloading and caching (through LocalStorage)
+- Automatic datafile downloading
 - User ID + attributes memoization
 - Render blocking until datafile is ready via a React API
 - Optimizely timeout (only block rendering up to the number of milliseconds you specify)
