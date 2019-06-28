@@ -331,7 +331,7 @@ const fetch = require('node-fetch')
 
 async function main() {
   const resp = await fetch(
-    'https://cdn.optimizely.com/datafiles/BsSyVRsUbE3ExgGCJ9w1to.json',
+    'https://cdn.optimizely.com/datafiles/<Your-SDK-Key>.json',
   )
   const datafile = await resp.json()
   const optimizely = createInstance({
