@@ -68,7 +68,7 @@ initApp()
 
 #### `optimizely.onReady()` to block rendering
 
-By using `await optimizely.onReady()` you can gaurantee code wont be run until the datafile is downloaded
+By using `await optimizely.onReady()` you can guarantee code wont be run until the datafile is downloaded
 
 ```js
 import * as optimizelySDK from '@optimizely/js-web-sdk'
@@ -77,11 +77,11 @@ const optimizely = optimizelySDK.createInstance({
 })
 
 await optimizely.onReady()
-// at this point datafile is gauranteed to be loaded
+// at this point datafile is guaranteed to be loaded
 initApp()
 ```
 
-However, the above example isn't great because Optimizely could time out due to network connectivity issues.  By passing a `timeout` to `optimizely.onReady()` we can gaurantee that Optimizely won't block the page for more than X milliseconds.
+However, the above example isn't great because Optimizely could time out due to network connectivity issues.  By passing a `timeout` to `optimizely.onReady()` we can guarantee that Optimizely won't block the page for more than X milliseconds.
 
 ```js
 import * as optimizelySDK from '@optimizely/js-web-sdk'

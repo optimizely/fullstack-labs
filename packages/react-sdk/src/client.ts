@@ -125,7 +125,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     id: null,
     attributes: {},
   }
-  private userPromiseResovler: (user: UserContext) => void
+  private userPromiseResolver: (user: UserContext) => void
   private userPromise: Promise<OnReadyResult>
   private isUserPromiseResolved: boolean = false
   private onUserUpdateHandlers: OnUserUpdateHandler[] = []
@@ -142,11 +142,11 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
   constructor(config: optimizely.Config) {
     this.initialConfig = config
 
-    this.userPromiseResovler = () => {}
+    this.userPromiseResolver = () => {}
     this._client = optimizely.createInstance(config)
 
     this.userPromise = new Promise(resolve => {
-      this.userPromiseResovler = resolve
+      this.userPromiseResolver = resolve
     }).then(() => ({ success: true }))
 
     this.dataReadyPromise = Promise.all([this.userPromise, this._client.onReady()]).then(
@@ -191,7 +191,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       this.user.attributes = userInfo.attributes
     }
     if (!this.isUserPromiseResolved) {
-      this.userPromiseResovler(this.user)
+      this.userPromiseResolver(this.user)
       this.isUserPromiseResolved = true
     }
     this.onUserUpdateHandlers.forEach(handler => handler(this.user))

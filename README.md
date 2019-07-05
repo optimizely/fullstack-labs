@@ -12,8 +12,8 @@ This repository is a monorepo that we manage using [Lerna](https://github.com/le
 
 | Package | Status | Version | Description |
 | --- | --- | --- | --- |
-| [`js-web-sdk`](./packages/js-web-sdk) | beta | `3.0.0-beta3` | Browser wrapper for Optimizely's Javascript SDK. |
-| [`react-sdk`](./packages/react-sdk) | beta |  `0.2.0-beta3` |Use Optimizely Feature Flags and AB Tests easily in React with a library of pre-built components.|
+| [`js-web-sdk`](./packages/js-web-sdk) | beta | `3.0.1-beta1` | Browser wrapper for Optimizely's Javascript SDK. |
+| [`react-sdk`](./packages/react-sdk) | beta |  `0.3.0-beta1` |Use Optimizely Feature Flags and AB Tests easily in React with a library of pre-built components.|
 | [`example-react-16`](./packages/example-react-16) | example | `--` | A simple example using `js-web-sdk` and `react-sdk` in React 16 |
 | [`example-react-typescript`](./packages/example-react-typescript) | example | `--` | A simple example using `js-web-sdk` and `react-sdk` in React + TypeScript |
 | [`example-react-15`](./packages/example-react-15) | example | `--` | A simple example using `js-web-sdk` and `react-sdk` in React 15 |

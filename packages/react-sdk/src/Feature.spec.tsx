@@ -107,7 +107,7 @@ describe('<OptimizelyFeature>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe('')
-      resolver.resolve({ sucess: true })
+      resolver.resolve({ success: true })
 
       await optimizelyMock.onReady()
 
@@ -133,7 +133,7 @@ describe('<OptimizelyFeature>', () => {
 
       // while it's waiting for onReady()
       expect(component.text()).toBe('')
-      resolver.resolve({ sucess: true })
+      resolver.resolve({ success: true })
 
       await optimizelyMock.onReady()
 
@@ -160,7 +160,7 @@ describe('<OptimizelyFeature>', () => {
 
         // while it's waiting for onReady()
         expect(component.text()).toBe('')
-        resolver.resolve({ sucess: true })
+        resolver.resolve({ success: true })
 
         await optimizelyMock.onReady()
 
@@ -209,7 +209,7 @@ describe('<OptimizelyFeature>', () => {
 
         // while it's waiting for onReady()
         expect(component.text()).toBe('')
-        resolver.resolve({ sucess: true })
+        resolver.resolve({ success: true })
 
         await optimizelyMock.onReady()
 
@@ -258,7 +258,7 @@ describe('<OptimizelyFeature>', () => {
 
         // while it's waiting for onReady()
         expect(component.text()).toBe('')
-        resolver.resolve({ sucess: false, reason: 'fail' })
+        resolver.resolve({ success: false, reason: 'fail' })
 
         await optimizelyMock.onReady()
 
