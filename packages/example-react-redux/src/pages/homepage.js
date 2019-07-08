@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { OptimizelyFeature, withOptimizely } from '@optimizely/react-sdk'
+import { OptimizelyFeature } from '@optimizely/react-sdk'
 
 
 export default class Homepage extends React.Component {

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import logo from './logo.svg'
 import './App.css'
 import { Provider as ReduxProvider } from 'react-redux'
 import configureStore from './modules/store'
@@ -8,6 +7,8 @@ import * as OptimizelyReactSDK from '@optimizely/react-sdk'
 import Homepage from './pages/homepage'
 
 const reduxStore = configureStore(window.REDUX_INITIAL_DATA)
+
+OptimizelyReactSDK.setLogLevel('debug')
 
 const optimizely = OptimizelyReactSDK.createInstance({
   sdkKey: 'BsSyVRsUbE3ExgGCJ9w1to',

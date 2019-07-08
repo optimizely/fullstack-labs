@@ -1095,11 +1095,58 @@
   resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
   integrity sha512-shAmDyaQC4H92APFoIaVDHCx5bStIocgvbwQyxPRrbUY20V1EYTbSDchWbuwlMG3V17cprZhA6+78JfB+3DTPw==
 
-"@optimizely/react-sdk@^0.3.0-beta1":
-  version "0.2.0-beta1"
-  resolved "https://registry.yarnpkg.com/@optimizely/react-sdk/-/react-sdk-0.2.0-beta1.tgz#06395e611d6fb4d7f08a127ad1dd03cb90626157"
-  integrity sha512-SEGvGq/7C8z8vcN3Xki0ZY2rRF36HxlMVFgJn9Jw4a3wzCOwBipboDhHaCeCfSbYrzTRi9LohOle7kDauzB/dA==
+"@optimizely/js-sdk-datafile-manager@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@optimizely/js-sdk-datafile-manager/-/js-sdk-datafile-manager-0.3.0.tgz#f014b52e0460a7529ed34286c98740bfb7c44344"
+  integrity sha512-Jidj/T30Me8TdmPiAx3dGY7xan2eN/EFgmfCwxMXuLoxtHI1dAKAi5PvCOYNHzFUOadhl0WN9KBIFmZVrXsLAg==
   dependencies:
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/js-sdk-utils" "^0.1.0"
+
+"@optimizely/js-sdk-event-processor@^0.2.0":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@optimizely/js-sdk-event-processor/-/js-sdk-event-processor-0.2.1.tgz#112dd4b53c8f1096b296e5f40f97795d4980ef15"
+  integrity sha512-0EobW13tOdvz6K9ypYzPONc4sp490r+HrUNzFsXx+S20oXGXD/T0wv36TEWueJ0uNICxUFv7owQ9vVyWZ1NM6g==
+  dependencies:
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/js-sdk-utils" "^0.1.0"
+
+"@optimizely/js-sdk-logging@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@optimizely/js-sdk-logging/-/js-sdk-logging-0.1.0.tgz#e5950c3d9a708fbd5931a043130469c5df7f64e8"
+  integrity sha512-Bs2zHvsdNIk2QSg05P6mKIlROHoBIRNStbrVwlePm603CucojKRPlFJG4rt7sFZQOo8xS8I7z1BmE4QI3/ZE9A==
+  dependencies:
+    "@optimizely/js-sdk-utils" "^0.1.0"
+
+"@optimizely/js-sdk-utils@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@optimizely/js-sdk-utils/-/js-sdk-utils-0.1.0.tgz#e3ac1fef81f11c15774f4743c3fa7c65d9c3352a"
+  integrity sha512-p7499GgVaX94YmkrwOiEtLgxgjXTPbUQsvETaAil5J7zg1TOA4Wl8ClalLSvCh+AKWkxGdkL4/uM/zfbxPSNNw==
+  dependencies:
+    uuid "^3.3.2"
+
+"@optimizely/optimizely-sdk@3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.2.0.tgz#5a8aeff7501e4567831597f2e916ce001377d47c"
+  integrity sha512-KnkR2ycLnemiVwIAfp3/8uzeSOnN7lx4SZ/QfdbgUVqfSnXHQR2sgxRONamLdUh9hnWfmiSxnfMqxUCq5z4tzg==
+  dependencies:
+    "@optimizely/js-sdk-datafile-manager" "^0.3.0"
+    "@optimizely/js-sdk-event-processor" "^0.2.0"
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/js-sdk-utils" "^0.1.0"
+    json-schema "^0.2.3"
+    lodash "^4.0.0"
+    murmurhash "0.0.2"
+    promise-polyfill "8.1.0"
+    uuid "^3.3.2"
+
+"@optimizely/react-sdk@^0.3.0-beta1":
+  version "0.3.0-beta1"
+  resolved "https://registry.yarnpkg.com/@optimizely/react-sdk/-/react-sdk-0.3.0-beta1.tgz#08ce3e89450430329383329e85839a445e9444a4"
+  integrity sha512-0ho7oBLPtF7EXIoWyOaL/Z81/KK++tESnMf25U663g7ChydJxZQHIJxSTpXCLPXve3p9eese+IRLJlz6hdsAcA==
+  dependencies:
+    "@optimizely/js-sdk-logging" "^0.1.0"
+    "@optimizely/optimizely-sdk" "3.2.0"
     prop-types "^15.6.2"
     react-broadcast "0.7.1"
     utility-types "^2.1.0"
@@ -5631,7 +5678,7 @@ json-schema-traverse@^0.4.1:
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
   integrity sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
 
-json-schema@0.2.3:
+json-schema@0.2.3, json-schema@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
   integrity sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=
@@ -5888,7 +5935,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-"lodash@>=3.5 <5", lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.5:
+"lodash@>=3.5 <5", lodash@^4.0.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.5:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -6221,6 +6268,11 @@ multicast-dns@^6.0.1:
   dependencies:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
+
+murmurhash@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/murmurhash/-/murmurhash-0.0.2.tgz#6f07bd8a1105e709c26fc89420cb5930c24585fe"
+  integrity sha1-bwe9ihEF5wnCb8iUIMtZMMJFhf4=
 
 mute-stream@0.0.7:
   version "0.0.7"
@@ -7656,6 +7708,11 @@ promise-inflight@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha1-mEcocL8igTL8vdhoEputEsPAKeM=
+
+promise-polyfill@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/promise-polyfill/-/promise-polyfill-8.1.0.tgz#30059da54d1358ce905ac581f287e184aedf995d"
+  integrity sha512-OzSf6gcCUQ01byV4BgwyUCswlaQQ6gzXc23aLQWhicvfX9kfsUiUhgt3CCQej8jDnl8/PhGF31JdHX2/MzF3WA==
 
 promise@8.0.2:
   version "8.0.2"
