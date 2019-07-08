@@ -13,12 +13,12 @@ import {
   withOptimizely,
 } from '@optimizely/react-sdk'
 
-import { OptimizelySDKWrapper } from '@optimizely/js-web-sdk'
+import { ReactSDKClient } from '@optimizely/react-sdk'
 import OTrackerButton from './TrackerButton'
 import MyHOC from './MyHOC';
 
 interface AppProps {
-  optimizely: OptimizelySDKWrapper
+  optimizely: ReactSDKClient
 }
 
 type FeatureProps = { isEnabled: boolean; variables: object }
@@ -30,9 +30,9 @@ function Feature1(props: FeatureProps): JSX.Element {
       <p>
         <strong>is enabled</strong> {isEnabled ? 'true' : 'false'}
       </p>
-      <p>
+      <div>
         <strong>variables</strong> <pre>{JSON.stringify(variables)}</pre>
-      </p>
+      </div>
     </>
   )
 }
@@ -49,8 +49,7 @@ export default class App extends React.Component<AppProps> {
       <OptimizelyProvider
         optimizely={optimizely}
         timeout={200}
-        userId={`jordan${Date.now()}`}
-        userAttributes={{ attribute1: 'yesssss' }}
+        user={{ id: `jordan${Date.now()}`, attributes: { attribute1: 'yesssss' } }}
       >
         <div className="App">
           <MyHOC title="got variation: "/>
