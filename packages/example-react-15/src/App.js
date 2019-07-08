@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import logo from './logo.svg'
 import './App.css'
 
 const {
@@ -15,7 +14,7 @@ class App extends Component {
       <OptimizelyProvider
         optimizely={this.props.optimizely}
         timeout={200}
-        userId="jordan"
+        user={{ id: 'jordan' }}
       >
         <div>
           <h1>Test app: React 15</h1>
