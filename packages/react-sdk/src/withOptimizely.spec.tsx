@@ -205,13 +205,15 @@ describe('withOptimizely', () => {
     const OptimizelyInput = withOptimizely(ForwardingFancyInput)
     const inputRef: React.RefObject<HTMLInputElement> = React.createRef()
 
-    const optimizelyMock = ({} as unknown) as OptimizelyClientWrapper
+    const optimizelyMock: ReactSDKClient = ({
+      setUser: jest.fn(),
+    } as unknown) as ReactSDKClient
 
     mount(
       <OptimizelyProvider
         optimizely={optimizelyMock}
         timeout={200}
-        userId="jordan"
+        user={{ id: 'jordan' }}
         userAttributes={{ plan_type: 'bronze' }}
         isServerSide={true}
       >
