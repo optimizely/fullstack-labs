@@ -17,10 +17,10 @@ import * as React from 'react'
 import { Subtract } from 'utility-types'
 
 import { OptimizelyContextConsumer } from './Context'
-import { UserWrappedOptimizelySDK } from './createUserWrapper'
+import { ReactSDKClient } from './client';
 
 export interface WithOptimizelyProps {
-  optimizely: UserWrappedOptimizelySDK | null
+  optimizely: ReactSDKClient | null
   optimizelyReadyTimeout: number | undefined
   isServerSide: boolean
 }
@@ -39,7 +39,7 @@ export function withOptimizely<P extends WithOptimizelyProps, R>(
       // https://github.com/microsoft/TypeScript/issues/28884
       <OptimizelyContextConsumer>
         {(value: {
-          optimizely: UserWrappedOptimizelySDK
+          optimizely: ReactSDKClient
           isServerSide: boolean
           timeout: number | undefined
         }) => (
