@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import logo from './logo.svg'
 import './App.css'
 
 import {
@@ -33,6 +32,10 @@ class TrackerButton extends React.Component {
   }
 
   render() {
+    const { variation } = this.state
+    if (variation === null) {
+      return null
+    }
     return <button onClick={this.track}>{JSON.stringify(this.state.variation)}</button>
   }
 }
@@ -44,12 +47,14 @@ class App extends Component {
       <OptimizelyProvider
         optimizely={this.props.optimizely}
         timeout={200}
-        userId="jordan"
+        user={{
+          id: 'jordan'
+        }}
       >
         <div>
           <h1>Test app: React 16</h1>
           <OptimizelyTrackerButton experimentKey="cat_size" />
-          <OptimizelyFeature feature="feature1">
+          <OptimizelyFeature feature="feature1" autoUpdate={true}>
             {(isEnabled, variables) => (
               <div>
                 <h2>feature: feature1</h2>

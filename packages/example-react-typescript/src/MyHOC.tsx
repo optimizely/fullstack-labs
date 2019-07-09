@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { WithOptimizelyProps, UserWrappedOptimizelySDK, withOptimizely } from '@optimizely/react-sdk'
+import { WithOptimizelyProps, withOptimizely, ReactSDKClient } from '@optimizely/react-sdk'
 
 interface MyProps extends WithOptimizelyProps {
   title: string
@@ -10,7 +10,7 @@ const Example: React.SFC<MyProps> = ({
   optimizely,
 }: {
   title: string
-  optimizely: UserWrappedOptimizelySDK | null
+  optimizely: ReactSDKClient | null
 }) => {
   if (optimizely === null) {
     throw new Error()

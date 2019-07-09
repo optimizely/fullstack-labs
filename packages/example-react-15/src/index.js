@@ -4,11 +4,10 @@ import './index.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 
-// import * as optimizelyReactSDK, { withOptimizely } from '@optimizely/react-sdk'
-const optimizelySDK  = require('@optimizely/js-web-sdk')
-// import * as optimizelySDK from '@optimizely/js-web-sdk'
+import * as optimizelyReactSDK from '@optimizely/react-sdk'
 
-const optimizely = optimizelySDK.createInstance({
+optimizelyReactSDK.setLogLevel('info')
+const optimizely = optimizelyReactSDK.createInstance({
   sdkKey: 'BsSyVRsUbE3ExgGCJ9w1to',
 })
 
