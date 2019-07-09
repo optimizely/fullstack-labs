@@ -17,7 +17,7 @@ import * as React from 'react'
 import { Subtract } from 'utility-types'
 
 import { OptimizelyContextConsumer } from './Context'
-import { ReactSDKClient } from './client';
+import { ReactSDKClient } from './client'
 
 export interface WithOptimizelyProps {
   optimizely: ReactSDKClient | null
@@ -30,10 +30,10 @@ export function withOptimizely<P extends WithOptimizelyProps, R>(
 ): React.ForwardRefExoticComponent<
   React.PropsWithoutRef<Subtract<P, WithOptimizelyProps>> & React.RefAttributes<R>
 > {
-  const WithOptimizely: React.RefForwardingComponent<
+  const withOptimizely: React.RefForwardingComponent<
     R,
     Subtract<P, WithOptimizelyProps>
-  > = (props, ref) => {
+  > = function withOptimizely(props, ref) {
     return (
       // Note: Casting props to P is necessary because of this TypeScript issue:
       // https://github.com/microsoft/TypeScript/issues/28884
@@ -54,5 +54,7 @@ export function withOptimizely<P extends WithOptimizelyProps, R>(
       </OptimizelyContextConsumer>
     )
   }
-  return React.forwardRef(WithOptimizely)
+  withOptimizely.displayName = `withOptimizely(${Component.displayName ||
+    Component.name})`
+  return React.forwardRef(withOptimizely)
 }
