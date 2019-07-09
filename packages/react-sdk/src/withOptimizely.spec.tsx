@@ -209,7 +209,7 @@ describe('withOptimizely', () => {
       setUser: jest.fn(),
     } as unknown) as ReactSDKClient
 
-    mount(
+    const component = mount(
       <OptimizelyProvider
         optimizely={optimizelyMock}
         timeout={200}
@@ -222,5 +222,7 @@ describe('withOptimizely', () => {
     )
     expect(inputRef.current).toBeInstanceOf(HTMLInputElement)
     expect(typeof inputRef.current!.focus).toBe('function')
+    const inputNode: HTMLInputElement = component.find('input').getDOMNode()
+    expect(inputRef.current!.value).toBe(inputNode.value)
   })
 })
