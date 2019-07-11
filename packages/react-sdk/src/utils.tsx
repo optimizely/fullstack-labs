@@ -41,7 +41,7 @@ export interface AcceptsForwardedRef<R> {
   forwardedRef?: React.Ref<R>
 }
 
-export function forwardRefs<R, P extends AcceptsForwardedRef<R>>(
+export function hoistStaticsAndForwardRefs<R, P extends AcceptsForwardedRef<R>>(
   Target: React.ComponentType<P>,
   Source: React.ComponentType<any>,
   displayName: string,

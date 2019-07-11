@@ -18,7 +18,7 @@ import { Subtract } from 'utility-types'
 
 import { OptimizelyContextConsumer } from './Context'
 import { ReactSDKClient } from './client'
-import { forwardRefs } from './utils'
+import { hoistStaticsAndForwardRefs } from './utils'
 
 export interface WithOptimizelyProps {
   optimizely: ReactSDKClient | null
@@ -63,7 +63,7 @@ export function withOptimizely<P extends WithOptimizelyProps, R>(
     }
   }
 
-  const withRefsForwarded = forwardRefs<R, WithoutOptimizelyProps<P>>(
+  const withRefsForwarded = hoistStaticsAndForwardRefs<R, WithoutOptimizelyProps<P>>(
     WithOptimizely,
     Component,
     'withOptimizely',
