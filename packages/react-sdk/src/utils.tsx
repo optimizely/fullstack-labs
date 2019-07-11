@@ -1,3 +1,4 @@
+import hoistNonReactStatics = require('hoist-non-react-statics')
 import * as optimizely from '@optimizely/optimizely-sdk'
 import * as React from 'react'
 
@@ -49,10 +50,12 @@ export function forwardRefs<R, P extends AcceptsForwardedRef<R>>(
   // From the React docs:
   //   https://reactjs.org/docs/higher-order-components.html#static-methods-must-be-copied-over
   //   https://reactjs.org/docs/forwarding-refs.html#forwarding-refs-in-higher-order-components
-  // TODO: hoist statics
   const forwardRef: React.RefForwardingComponent<R, P> = (props, ref) => (
     <Target {...props} forwardedRef={ref} />
   )
   forwardRef.displayName = `${displayName}(${Source.displayName || Source.name})`
-  return React.forwardRef(forwardRef)
+  return hoistNonReactStatics<
+    React.ForwardRefExoticComponent<React.PropsWithoutRef<P> & React.RefAttributes<R>>,
+    React.ComponentType<any>
+  >(React.forwardRef(forwardRef), Source)
 }
