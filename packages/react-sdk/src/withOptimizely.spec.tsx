@@ -225,4 +225,21 @@ describe('withOptimizely', () => {
     const inputNode: HTMLInputElement = component.find('input').getDOMNode()
     expect(inputRef.current!).toBe(inputNode)
   })
+
+  it('should hoist non-React statics', () => {
+    class MyComponentWithAStatic extends React.Component<TestProps> {
+      static foo(): string {
+        return 'foo'
+      }
+
+      render() {
+        return (
+          <div>I have a static method</div>
+        )
+      }
+    }
+    const OptlyComponent = withOptimizely(MyComponentWithAStatic)
+    expect(typeof (OptlyComponent as any).foo).toBe('function')
+    expect((OptlyComponent as any).foo()).toBe('foo')
+  })
 })
