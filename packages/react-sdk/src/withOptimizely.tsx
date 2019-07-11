@@ -41,6 +41,8 @@ export function withOptimizely<P extends WithOptimizelyProps, R>(
   class WithOptimizely extends React.Component<WrapperProps> {
     render() {
       const { forwardedRef, ...rest } = this.props
+      // Note: Casting props to P is necessary because of this TypeScript issue:
+      // https://github.com/microsoft/TypeScript/issues/28884
       return (
         <OptimizelyContextConsumer>
           {(value: {
