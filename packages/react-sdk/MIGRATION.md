@@ -1,5 +1,5 @@
-# Migrating
-Guides for migrating to new versions will be kept in this file.
+# Migration
+Guides for migration to new versions will be kept in this file.
 ## 0.3.0
 #### Dependency changes
 This version brings an internal refactor to use the @optimizely/optimizely-sdk package instead of @optimizely/js-web-sdk.
@@ -16,7 +16,7 @@ This version brings an internal refactor to use the @optimizely/optimizely-sdk p
 #### Instantiation
 The @optimizely/react-sdk package now provides a `createInstance` method, which is used just like the method of the same name from @optimizely/js-web-sdk. `createInstance` accepts a config object as its argument. The format of this object is documented in our [developer documentation for Instantiate](https://docs.developers.optimizely.com/full-stack/docs/instantiate).
 
-***Note:*** Under the hood, @optimizely/react-sdk uses @optimizely/optimizely-sdk version 3.2. Instantiation options discussed in [Update datafiles automatically](https://docs.developers.optimizely.com/full-stack/docs/update-datafiles-automatically) are supported by `createInstance`. For example:
+***Note:*** Under the hood, @optimizely/react-sdk uses @optimizely/optimizely-sdk version 3.2.0. Instantiation options discussed in [Update datafiles automatically](https://docs.developers.optimizely.com/full-stack/docs/update-datafiles-automatically) are supported by `createInstance`. For example:
 ```js
 import { createInstance } from '@optimizely/react-sdk'
 
