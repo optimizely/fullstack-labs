@@ -131,6 +131,17 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, document.getElementById('root'))
 ```
+#### Logging support
+You can now configure a logger and log level directly via the React SDK:
+```js
+import * as optimizelySDK from '@optimizely/react-sdk'
+// Set the log level to debug
+optimizelySDK.setLogLevel('debug');
+// Set a console-based default logger
+optimizelySDK.setLogger(optimizelySDK.logging.createLogger());
+// Disable logging
+optimizelySDK.setLogger(null);
+```
 #### Functionality changes
 With the switch from @optimizely/js-web-sdk to @optimizely/optimizely-sdk, be aware of the following changes in functionality:
 - `localStorage`-based datafile caching was removed
