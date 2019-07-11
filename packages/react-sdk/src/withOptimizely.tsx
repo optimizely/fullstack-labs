@@ -17,7 +17,8 @@ import * as React from 'react'
 import { Subtract } from 'utility-types'
 
 import { OptimizelyContextConsumer } from './Context'
-import { ReactSDKClient } from './client';
+import { ReactSDKClient } from './client'
+import { forwardRefs } from './utils'
 
 export interface WithOptimizelyProps {
   optimizely: ReactSDKClient | null
@@ -25,11 +26,21 @@ export interface WithOptimizelyProps {
   isServerSide: boolean
 }
 
-export function withOptimizely<P extends WithOptimizelyProps>(
+export type WithoutOptimizelyProps<P extends WithOptimizelyProps> = Subtract<
+  P,
+  WithOptimizelyProps
+>
+
+export function withOptimizely<P extends WithOptimizelyProps, R>(
   Component: React.ComponentType<P>,
-): React.ComponentType<Subtract<P, WithOptimizelyProps>> {
-  return class WithOptimizely extends React.Component<Subtract<P, WithOptimizelyProps>> {
+): React.ForwardRefExoticComponent<
+  React.PropsWithoutRef<WithoutOptimizelyProps<P>> & React.RefAttributes<R>
+> {
+  type WrapperProps = WithoutOptimizelyProps<P> & { forwardedRef?: React.Ref<R> }
+
+  class WithOptimizely extends React.Component<WrapperProps> {
     render() {
+      const { forwardedRef, ...rest } = this.props
       return (
         <OptimizelyContextConsumer>
           {(value: {
@@ -37,16 +48,24 @@ export function withOptimizely<P extends WithOptimizelyProps>(
             isServerSide: boolean
             timeout: number | undefined
           }) => (
-            // @ts-ignore
             <Component
-              {...this.props}
+              {...rest as P}
               optimizelyReadyTimeout={value.timeout}
               optimizely={value.optimizely}
               isServerSide={value.isServerSide}
+              ref={forwardedRef}
             />
           )}
         </OptimizelyContextConsumer>
       )
     }
   }
+
+  const withRefsForwarded = forwardRefs<R, WithoutOptimizelyProps<P>>(
+    WithOptimizely,
+    Component,
+    'withOptimizely',
+  )
+
+  return withRefsForwarded
 }

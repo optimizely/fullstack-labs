@@ -192,4 +192,37 @@ describe('withOptimizely', () => {
       optimizelyReadyTimeout: 200,
     })
   })
+
+  it('should forward refs', () => {
+    interface FancyInputProps extends TestProps {
+      defaultValue: string
+    }
+    const FancyInput: React.RefForwardingComponent<HTMLInputElement, FancyInputProps> = (
+      props,
+      ref,
+    ) => <input ref={ref} className="fancyInput" defaultValue={props.defaultValue} />
+    const ForwardingFancyInput = React.forwardRef(FancyInput)
+    const OptimizelyInput = withOptimizely(ForwardingFancyInput)
+    const inputRef: React.RefObject<HTMLInputElement> = React.createRef()
+
+    const optimizelyMock: ReactSDKClient = ({
+      setUser: jest.fn(),
+    } as unknown) as ReactSDKClient
+
+    const component = mount(
+      <OptimizelyProvider
+        optimizely={optimizelyMock}
+        timeout={200}
+        user={{ id: 'jordan' }}
+        userAttributes={{ plan_type: 'bronze' }}
+        isServerSide={true}
+      >
+        <OptimizelyInput ref={inputRef} defaultValue="hi" />
+      </OptimizelyProvider>,
+    )
+    expect(inputRef.current).toBeInstanceOf(HTMLInputElement)
+    expect(typeof inputRef.current!.focus).toBe('function')
+    const inputNode: HTMLInputElement = component.find('input').getDOMNode()
+    expect(inputRef.current!).toBe(inputNode)
+  })
 })
