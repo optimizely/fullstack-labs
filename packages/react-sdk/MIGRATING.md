@@ -131,3 +131,7 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, document.getElementById('root'))
 ```
+#### Functionality changes
+With the switch from @optimizely/js-web-sdk to @optimizely/optimizely-sdk, be aware of the following changes in functionality:
+- `localStorage`-based datafile caching was removed
+- `track` calls that happen before the datafile is downloaded are no longer enqueued
