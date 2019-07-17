@@ -78,7 +78,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 100 })
       // while it's waiting for onReady()
       expect(component.text()).toBe('')
-      resolver.resolve({ sucess: true })
+      resolver.resolve({ success: true })
 
       await optimizelyMock.onReady()
 
@@ -100,7 +100,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(optimizelyMock.onReady).toHaveBeenCalledWith({ timeout: 200 })
       // while it's waiting for onReady()
       expect(component.text()).toBe('')
-      resolver.resolve({ sucess: true })
+      resolver.resolve({ success: true })
 
       await optimizelyMock.onReady()
 
@@ -198,7 +198,7 @@ describe('<OptimizelyExperiment>', () => {
       expect(component.text()).toBe('')
     })
 
-    describe('when the onReady() promise return { sucess: false }', () => {
+    describe('when the onReady() promise return { success: false }', () => {
       it('should still render', async () => {
         const component = mount(
           <OptimizelyProvider optimizely={optimizelyMock}>
