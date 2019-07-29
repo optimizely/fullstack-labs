@@ -36,38 +36,39 @@ const optimizely = createInstance({
 
 class App extends React.Component {
   render() {
-    <OptimizelyProvider
-      optimizely={optimizely}
-      timeout={500}
-      userId={window.userId}
-      userAttributes={{ plan_type: 'bronze' }}
-    >
-      <OptimizelyExperiment experiment="ab-test">
-        {(variation) => (
-          <p>got variation {variation}</p>
-        )}
-      </OptimizelyExperiment>
+    return (
+      <OptimizelyProvider
+        optimizely={optimizely}
+        timeout={500}
+        user={{id: window.userId, attributes: {plan_type: 'bronze'}}}
+      >
+        <OptimizelyExperiment experiment="ab-test">
+          {(variation) => (
+            <p>got variation {variation}</p>
+          )}
+        </OptimizelyExperiment>
 
-      <OptimizelyExperiment experiment="button-color">
-        <OptimizelyVariation variation="blue">
-          <BlueButton />
-        </OptimizelyVariation>
+        <OptimizelyExperiment experiment="button-color">
+          <OptimizelyVariation variation="blue">
+            <BlueButton />
+          </OptimizelyVariation>
 
-        <OptimizelyVariation variation="green">
-          <GreenButton />
-        </OptimizelyVariation>
+          <OptimizelyVariation variation="green">
+            <GreenButton />
+          </OptimizelyVariation>
 
-        <OptimizelyVariation default>
-          <DefaultButton />
-        </OptimizelyVariation>
-      </OptimizelyExperiment>
+          <OptimizelyVariation default>
+            <DefaultButton />
+          </OptimizelyVariation>
+        </OptimizelyExperiment>
 
-      <OptimizelyFeature feature="sort-algorithm">
-        {(isEnabled, variables) => (
-          <SearchComponent algorithm={variables.algorithm} />
-        )}
-      </OptimizelyFeature>
-    </OptimizelyProvider>
+        <OptimizelyFeature feature="sort-algorithm">
+          {(isEnabled, variables) => (
+            <SearchComponent algorithm={variables.algorithm} />
+          )}
+        </OptimizelyFeature>
+      </OptimizelyProvider>
+    )
   }
 }
 
@@ -100,8 +101,7 @@ Required at the root level. Leverages React’s `Context` API to allow access to
 
 *props*
 * `optimizely : ReactSDKClient` created from `createInstance`
-* `userId : String` userId to be passed to the SDK for every feature flag, A/B test, or `track` call
-* `userAttributes : Object` (optional) userAttributes passed for every feature flag, A/B test, or `track` call
+* `user: { id: string; attributes?: { [key: string]: any } }` User info object - `id` and `attributes` will be passed to the SDK for every feature flag, A/B test, or `track` call
 * `timeout : Number` (optional) The amount of time for OptimizelyExperiment and OptimizelyFeature components to render `null` before resolving
 * `isServerSide : Boolean` (optional) must pass `true` here for server side rendering
 
@@ -119,7 +119,7 @@ const optimizely = createInstance({
 class AppWrapper extends React.Component {
   render() {
     return (
-      <OptimizelyProvider optimizely={optimizely} userId={window.userId}>
+      <OptimizelyProvider optimizely={optimizely} user={{id: window.userId}}>
         <App />
       </OptimizelyProvider>
     )
@@ -144,8 +144,7 @@ class App extends React.Component {
       <OptimizelyProvider
         optimizely={optimizely}
         timeout={500}
-        userId={window.userId}
-        userAttributes={{ plan_type: 'bronze' }}
+        user={{id: window.userId, attributes: {plan_type: 'bronze'}}}
       >
         <HomePage />
       </OptimizelyProvider>
@@ -163,13 +162,19 @@ class App extends React.Component {
 You can use OptimizelyExperiment via a child render function. If the component contains a function as a child, `<OptimizelyExperiment>` will call that function, with the result of `optimizely.activate(experimentKey)`.
 
 ```jsx
-<OptimizelyExperiment experiment="exp1">
-  {(variation) => (
-    variation === 'simple'
-      ? <SimpleComponent />
-      : <DetailedComponent />
-  )}
-</OptimizelyExperiment>
+import { OptimizelyExperiment } from '@optimizely/react-sdk'
+
+function ExperimentComponent() {
+  return (
+    <OptimizelyExperiment experiment="exp1">
+      {(variation) => (
+        variation === 'simple'
+          ? <SimpleComponent />
+          : <DetailedComponent />
+      )}
+    </OptimizelyExperiment>
+  )
+}
 ```
 
 You can also use the `<OptimizelyVariation>` component.
@@ -178,19 +183,24 @@ You can also use the `<OptimizelyVariation>` component.
 
 ```jsx
 import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk'
-<OptimizelyExperiment experiment="exp1">
-  <OptimizelyVariation variation="simple">
-    <SimpleComponent />
-  </OptimizelyVariation>
 
-  <OptimizelyVariation variation="detailed">
-    <ComplexComponent />
-  </OptimizelyVariation>
+function ExperimentComponent() {
+  return (
+    <OptimizelyExperiment experiment="exp1">
+      <OptimizelyVariation variation="simple">
+        <SimpleComponent />
+      </OptimizelyVariation>
 
-  <OptimizelyVariation default>
-    <SimpleComponent />
-  </OptimizelyVariation>
-</OptimizelyExperiment>
+      <OptimizelyVariation variation="detailed">
+        <ComplexComponent />
+      </OptimizelyVariation>
+
+      <OptimizelyVariation default>
+        <SimpleComponent />
+      </OptimizelyVariation>
+    </OptimizelyExperiment>
+  )
+}
 ```
 
 ## Feature
@@ -198,13 +208,19 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 ### Render something if feature is enabled
 
 ```jsx
-<OptimizelyFeature feature="new-login-page">
-  {(isEnabled) => (
-    <a href={isEnabled ? "/login" : "/login2"}>
-      Login
-    </a>
-  )}
-</OptimizelyFeature>
+import { OptimizelyFeature } from '@optimizely/react-sdk'
+
+function FeatureComponent() {
+  return (
+    <OptimizelyFeature feature="new-login-page">
+      {(isEnabled) => (
+        <a href={isEnabled ? "/login" : "/login2"}>
+          Login
+        </a>
+      )}
+    </OptimizelyFeature>
+  )
+}
 ```
 
 ### Render feature variables
@@ -212,28 +228,44 @@ import { OptimizelyExperiment, OptimizelyVariation } from '@optimizely/react-sdk
 `variables` provide additional configuration for a feature and is a [feature of Optimizely FullStack](https://docs.developers.optimizely.com/full-stack/docs/define-feature-variables). `variables` are not available in Optimizely Rollouts.
 
 ```jsx
-<OptimizelyFeature feature="new-login-page">
-  {(isEnabled, variables) => (
-    <a href={isEnabled ? "/login" : "/login2"}>
-      {variables.loginText}
-    </a>
-  )}
-</OptimizelyFeature>
+import { OptimizelyFeature } from '@optimizely/react-sdk'
+
+function FeatureComponent() {
+  return (
+    <OptimizelyFeature feature="new-login-page">
+      {(isEnabled, variables) => (
+        <a href={isEnabled ? "/login" : "/login2"}>
+          {variables.loginText}
+        </a>
+      )}
+    </OptimizelyFeature>
+  )
+}
 ```
 
 ### Rollout or experiment a feature user-by-user
 
 To rollout or experiment on a feature by user rather than by random percentage, setup an attribute in Optimizely and create an Audience, which uses that attribute. Then pass along this attribute to the Provider.
-```
-  <OptimizelyProvider
-    optimizely={optimizely}
-    timeout={500}
-    userId={'user123'}     // UserId used for random percentage rollout 
-    userAttributes={{ 
-      user_id: 'user123'   // Attribute used for non-random audience rollout
-      plan_type: 'bronze',
-    }}
-  >
+```jsx
+import { OptimizelyProvider } from '@optimizely/react-sdk'
+
+function AppComponent() {
+  return (
+    <OptimizelyProvider
+      optimizely={optimizely}
+      timeout={500}
+      user={{
+        id: 'user123',          // UserId used for random percentage rollout
+        attributes: {
+          user_id: 'user123'    // Attribute used for non-random audience rollout
+          plan_type: 'bronze',
+        },
+      }}
+    >
+    {/* Your app here */}
+    </OptimizelyProvider>
+  )
+}
 ```
 
 This kind of targeted rollout or experiment is used when running a beta. For more information see the documentation on how to [run a beta](https://docs.developers.optimizely.com/rollouts/docs/run-a-beta).
@@ -266,6 +298,8 @@ class MyComp extends React.Component {
 const WrappedMyComponent = withOptimizely(MyComp)
 ```
 
+***Note:*** The `optimizely` client object provided via `withOptimizely` is automatically associated with the `user` prop passed to the ancestor `OptimizelyProvider` - the `id` and `attributes` from that `user` object will be automatically forwarded to all appropriate SDK method calls. So, there is no need to pass the `userId` or `attributes` arguments when calling methods of the `optimizely` client object, unless you wish to use *different* `userId` or `attributes` than those given to `OptimizelyProvider`.
+
 ## Tracking
 
 Use the `withOptimizely` HoC for tracking.
@@ -290,6 +324,8 @@ class SignupButton extends React.Component {
 const WrappedSignupButton = withOptimizely(SignupButton)
 ```
 
+***Note:*** As mentioned above, the `optimizely` client object provided via `withOptimizely` is automatically associated with the `user` prop passed to the ancestor `OptimizelyProvider.` There is no need to pass `userId` or `attributes` arguments when calling `track`, unless you wish to use *different* `userId` or `attributes` than those given to `OptimizelyProvider`.
+
 
 ## Server Side Rendering
 Right now server side rendering is possible with a few caveats.
@@ -306,7 +342,7 @@ Similar to browser side rendering you will need to wrap your app (or portion of 
 `isServerSide` must be equal to true.
 
 ```jsx
-<OptimizelyProvider optimizely={optimizely} userId="user1" isServerSide={true}>
+<OptimizelyProvider optimizely={optimizely} user={{id: "user1"}} isServerSide={true}>
   <App />
 </OptimizelyProvider>
 ```
@@ -339,7 +375,7 @@ async function main() {
   })
 
   const output = ReactDOMServer.renderToString(
-    <OptimizelyProvider optimizely={optimizely} userId="user1" isServerSide={true}>
+    <OptimizelyProvider optimizely={optimizely} user={{id: "user1"}} isServerSide={true}>
       <OptimizelyFeature feature="feature1">
         {featureEnabled => (featureEnabled ? <p>enabled</p> : <p>disabled</p>)}
       </OptimizelyFeature>
