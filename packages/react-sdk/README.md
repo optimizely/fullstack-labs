@@ -228,8 +228,8 @@ To rollout or experiment on a feature by user rather than by random percentage, 
   <OptimizelyProvider
     optimizely={optimizely}
     timeout={500}
-    userId={'user123'}     // UserId used for random percentage rollout 
-    userAttributes={{ 
+    userId={'user123'}     // UserId used for random percentage rollout
+    userAttributes={{
       user_id: 'user123'   // Attribute used for non-random audience rollout
       plan_type: 'bronze',
     }}
@@ -357,6 +357,17 @@ async function main() {
   console.log('output', output)
 }
 main()
+```
+
+## Disabled event dispatcher
+To disable sending all events to Optimizely's results backend, use the `disabledEventDispatcher` when creating a client:
+```js
+import { createInstance, disabledEventDispatcher } from '@optimizely/react-sdk'
+
+const optimizely = createInstance({
+  datafile: window.datafile,
+  eventDispatcher: disabledEventDispatcher,
+})
 ```
 
 ## Credits
