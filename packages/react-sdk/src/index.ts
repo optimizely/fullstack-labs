@@ -29,3 +29,5 @@ export {
 } from '@optimizely/optimizely-sdk'
 
 export { createInstance, ReactSDKClient } from './client'
+
+export { default as disabledEventDispatcher } from './disabledEventDispatcher'
