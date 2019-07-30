@@ -395,6 +395,17 @@ async function main() {
 main()
 ```
 
+## Disabled event dispatcher
+To disable sending all events to Optimizely's results backend, use the `logOnlyEventDispatcher` when creating a client:
+```js
+import { createInstance, logOnlyEventDispatcher } from '@optimizely/react-sdk'
+
+const optimizely = createInstance({
+  datafile: window.datafile,
+  eventDispatcher: logOnlyEventDispatcher,
+})
+```
+
 ## Credits
 
 First-party code (under lib/ and dist/) is copyright Optimizely, Inc. and contributors, licensed under Apache 2.0.
