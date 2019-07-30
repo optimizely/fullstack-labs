@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as optimizely from '@optimizely/optimizely-sdk'
+import optimizely from '@optimizely/optimizely-sdk'
 
 import { createInstance, OnReadyResult, ReactSDKClient } from './client'
 

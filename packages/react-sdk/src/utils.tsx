@@ -1,5 +1,5 @@
 import hoistNonReactStatics from 'hoist-non-react-statics'
-import * as optimizely from '@optimizely/optimizely-sdk'
+import optimizely from '@optimizely/optimizely-sdk'
 import * as React from 'react'
 
 type User = {
