@@ -30,4 +30,4 @@ export {
 
 export { createInstance, ReactSDKClient } from './client'
 
-export { default as disabledEventDispatcher } from './disabledEventDispatcher'
+export { default as logOnlyEventDispatcher } from './logOnlyEventDispatcher'

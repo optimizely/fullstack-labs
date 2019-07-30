@@ -20,11 +20,11 @@ import * as logging from '@optimizely/js-sdk-logging'
 const logger = logging.getLogger('ReactSDK')
 
 /**
- * disabledEventDispatcher only logs a message at the debug level, and does not
+ * logOnlyEventDispatcher only logs a message at the debug level, and does not
  * send any requests to the Optimizely results backend. Use this to disable
  * all event dispatching.
  */
-const disabledEventDispatcher: optimizely.EventDispatcher = {
+const logOnlyEventDispatcher: optimizely.EventDispatcher = {
   dispatchEvent(event: optimizely.Event, callback: () => void): void {
     logger.debug('Event not dispatched by disabled event dispatcher: %s', () => {
       let eventStr: string
@@ -38,4 +38,4 @@ const disabledEventDispatcher: optimizely.EventDispatcher = {
   }
 }
 
-export default disabledEventDispatcher
+export default logOnlyEventDispatcher
