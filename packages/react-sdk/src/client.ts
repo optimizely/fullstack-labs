@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import optimizely from '@optimizely/optimizely-sdk'
+import * as optimizely from '@optimizely/optimizely-sdk'
 import * as logging from '@optimizely/js-sdk-logging'
 
 const logger = logging.getLogger('ReactSDK')

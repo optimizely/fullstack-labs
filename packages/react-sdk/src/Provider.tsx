@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import * as React from 'react'
-import optimizely from '@optimizely/optimizely-sdk'
+import * as optimizely from '@optimizely/optimizely-sdk'
 import { getLogger } from '@optimizely/js-sdk-logging'
 
 import { OptimizelyContextProvider } from './Context'
