@@ -6,7 +6,8 @@
     "target": "es5",
     "lib": ["es2015", "dom"],
     "jsx": "react",
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "esModuleInterop": true
   },
   "include": ["./src"],
   "exclude": ["./node_modules", "./src/**/*.spec.tsx", "./src/**/*.spec.ts"]

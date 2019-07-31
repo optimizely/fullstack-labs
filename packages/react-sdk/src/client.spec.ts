@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+jest.mock('@optimizely/optimizely-sdk')
 
 import * as optimizely from '@optimizely/optimizely-sdk'
 
@@ -48,12 +49,13 @@ describe('ReactSDKClient', () => {
         clearAllNotificationListeners: jest.fn(),
       },
     }
-    createInstanceSpy = jest
-      .spyOn(optimizely, 'createInstance')
-      .mockReturnValueOnce(mockInnerClient)
+    const anyOptly = optimizely as any
+    anyOptly.createInstance.mockReturnValue(mockInnerClient)
+    createInstanceSpy = (optimizely.createInstance) as jest.Mock<optimizely.Client, [optimizely.Config]>
   })
 
   afterEach(() => {
+    jest.resetAllMocks()
     jest.restoreAllMocks()
   })
 

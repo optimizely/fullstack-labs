@@ -17,7 +17,7 @@
 
 import * as React from 'react'
 import * as Enzyme from 'enzyme'
-import * as Adapter from 'enzyme-adapter-react-16'
+import Adapter from 'enzyme-adapter-react-16'
 Enzyme.configure({ adapter: new Adapter() })
 
 import { mount } from 'enzyme'
@@ -191,5 +191,55 @@ describe('withOptimizely', () => {
       isServerSide: true,
       optimizelyReadyTimeout: 200,
     })
+  })
+
+  it('should forward refs', () => {
+    interface FancyInputProps extends TestProps {
+      defaultValue: string
+    }
+    const FancyInput: React.RefForwardingComponent<HTMLInputElement, FancyInputProps> = (
+      props,
+      ref,
+    ) => <input ref={ref} className="fancyInput" defaultValue={props.defaultValue} />
+    const ForwardingFancyInput = React.forwardRef(FancyInput)
+    const OptimizelyInput = withOptimizely(ForwardingFancyInput)
+    const inputRef: React.RefObject<HTMLInputElement> = React.createRef()
+
+    const optimizelyMock: ReactSDKClient = ({
+      setUser: jest.fn(),
+    } as unknown) as ReactSDKClient
+
+    const component = mount(
+      <OptimizelyProvider
+        optimizely={optimizelyMock}
+        timeout={200}
+        user={{ id: 'jordan' }}
+        userAttributes={{ plan_type: 'bronze' }}
+        isServerSide={true}
+      >
+        <OptimizelyInput ref={inputRef} defaultValue="hi" />
+      </OptimizelyProvider>,
+    )
+    expect(inputRef.current).toBeInstanceOf(HTMLInputElement)
+    expect(typeof inputRef.current!.focus).toBe('function')
+    const inputNode: HTMLInputElement = component.find('input').getDOMNode()
+    expect(inputRef.current!).toBe(inputNode)
+  })
+
+  it('should hoist non-React statics', () => {
+    class MyComponentWithAStatic extends React.Component<TestProps> {
+      static foo(): string {
+        return 'foo'
+      }
+
+      render() {
+        return (
+          <div>I have a static method</div>
+        )
+      }
+    }
+    const OptlyComponent = withOptimizely(MyComponentWithAStatic)
+    expect(typeof (OptlyComponent as any).foo).toBe('function')
+    expect((OptlyComponent as any).foo()).toBe('foo')
   })
 })
