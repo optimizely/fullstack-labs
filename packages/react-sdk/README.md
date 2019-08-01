@@ -12,12 +12,11 @@ Optimizely Rollouts is free feature flags for development teams. Easily roll out
 - User ID + attributes memoization
 - Render blocking until datafile is ready via a React API
 - Optimizely timeout (only block rendering up to the number of milliseconds you specify)
-- Event queuing for `track`, which allows `track` calls to happen before datafile is downloaded
 - Library of React components to use with [feature flags](https://docs.developers.optimizely.com/full-stack/docs/use-feature-flags) and [A/B tests](https://docs.developers.optimizely.com/full-stack/docs/run-a-b-tests)
 
 ### Compatibility
 
-`React 15.x +`
+The React SDK is compatible with `React 16.3.0 +`
 
 ### Example
 
