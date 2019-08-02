@@ -420,17 +420,17 @@ Prod dependencies are as follows:
   },
   "@optimizely/js-sdk-event-processor@0.2.1": {
     "licenses": "MIT",
-    "publisher": "jordangarcia",
+    "publisher": "Optimizely",
     "repository": "https://github.com/optimizely/javascript-sdk"
   },
   "@optimizely/js-sdk-logging@0.1.0": {
     "licenses": "MIT",
-    "publisher": "jordangarcia",
+    "publisher": "Optimizely",
     "repository": "https://github.com/optimizely/javascript-sdk"
   },
   "@optimizely/js-sdk-utils@0.1.0": {
     "licenses": "MIT",
-    "publisher": "jordangarcia",
+    "publisher": "Optimizely",
     "repository": "https://github.com/optimizely/javascript-sdk"
   },
   "@optimizely/optimizely-sdk@3.2.0": {
