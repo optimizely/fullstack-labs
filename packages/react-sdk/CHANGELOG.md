@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 * Added logOnlyEventDispatcher, which can be used to disable sending all events to Optimizely's results backend
+* Added support for ref forwarding and copying of non-React statics in withOptimizely HOC
 
 ## 0.3.0-beta1
 * Remove js-web-sdk dependency, add optimizely-sdk dependency.

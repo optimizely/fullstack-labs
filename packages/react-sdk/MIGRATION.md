@@ -131,6 +131,8 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, document.getElementById('root'))
 ```
+#### Ref Forwarding in withOptimizely, and new minimum React version
+The `withOptimizely` HOC now supports [ref forwarding](https://reactjs.org/docs/forwarding-refs.html#forwarding-refs-in-higher-order-components). As a result, we have ***dropped support for React version <16.3***, which was the version that introduced the ref forwarding API.
 #### Logging support
 You can now configure a logger and log level directly via the React SDK:
 ```js
