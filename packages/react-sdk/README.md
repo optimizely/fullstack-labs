@@ -415,22 +415,71 @@ Prod dependencies are as follows:
 
 ```json
 {
+  "@optimizely/js-sdk-datafile-manager@0.3.0": {
+    "licenses": "Apache-2.0"
+  },
+  "@optimizely/js-sdk-event-processor@0.2.1": {
+    "licenses": "MIT",
+    "publisher": "Optimizely",
+    "repository": "https://github.com/optimizely/javascript-sdk"
+  },
+  "@optimizely/js-sdk-logging@0.1.0": {
+    "licenses": "MIT",
+    "publisher": "Optimizely",
+    "repository": "https://github.com/optimizely/javascript-sdk"
+  },
+  "@optimizely/js-sdk-utils@0.1.0": {
+    "licenses": "MIT",
+    "publisher": "Optimizely",
+    "repository": "https://github.com/optimizely/javascript-sdk"
+  },
+  "@optimizely/optimizely-sdk@3.2.0": {
+    "licenses": "Apache-2.0",
+    "repository": "https://github.com/optimizely/javascript-sdk"
+  },
+  "hoist-non-react-statics@3.3.0": {
+    "licenses": "BSD-3-Clause",
+    "publisher": "Michael Ridgway",
+    "repository": "https://github.com/mridgway/hoist-non-react-statics"
+  },
   "js-tokens@4.0.0": {
     "licenses": "MIT",
     "publisher": "Simon Lydell",
     "repository": "https://github.com/lydell/js-tokens"
+  },
+  "json-schema@0.2.3": {
+    "licenses": [
+      "AFLv2.1",
+      "BSD"
+    ],
+    "publisher": "Kris Zyp",
+    "repository": "https://github.com/kriszyp/json-schema"
+  },
+  "lodash@4.17.11": {
+    "licenses": "MIT",
+    "publisher": "John-David Dalton",
+    "repository": "https://github.com/lodash/lodash"
   },
   "loose-envify@1.4.0": {
     "licenses": "MIT",
     "publisher": "Andres Suarez",
     "repository": "https://github.com/zertosh/loose-envify"
   },
+  "murmurhash@0.0.2": {
+    "licenses": "MIT*",
+    "repository": "https://github.com/perezd/node-murmurhash"
+  },
   "object-assign@4.1.1": {
     "licenses": "MIT",
     "publisher": "Sindre Sorhus",
     "repository": "https://github.com/sindresorhus/object-assign"
   },
-  "prop-types@15.6.2": {
+  "promise-polyfill@8.1.0": {
+    "licenses": "MIT",
+    "publisher": "Taylor Hakes",
+    "repository": "https://github.com/taylorhakes/promise-polyfill"
+  },
+  "prop-types@15.7.2": {
     "licenses": "MIT",
     "repository": "https://github.com/facebook/prop-types"
   },
@@ -439,11 +488,15 @@ Prod dependencies are as follows:
     "publisher": "Michael Jackson",
     "repository": "https://github.com/ReactTraining/react-broadcast"
   },
-  "react@16.7.0": {
+  "react-is@16.8.6": {
     "licenses": "MIT",
     "repository": "https://github.com/facebook/react"
   },
-  "scheduler@0.12.0": {
+  "react@16.8.6": {
+    "licenses": "MIT",
+    "repository": "https://github.com/facebook/react"
+  },
+  "scheduler@0.13.6": {
     "licenses": "MIT",
     "repository": "https://github.com/facebook/react"
   },
@@ -451,6 +504,10 @@ Prod dependencies are as follows:
     "licenses": "MIT",
     "publisher": "Piotr Witek",
     "repository": "https://github.com/piotrwitek/utility-types"
+  },
+  "uuid@3.3.2": {
+    "licenses": "MIT",
+    "repository": "https://github.com/kelektiv/node-uuid"
   },
   "warning@3.0.0": {
     "licenses": "BSD-3-Clause",
