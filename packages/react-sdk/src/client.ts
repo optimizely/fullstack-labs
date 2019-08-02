@@ -143,7 +143,12 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     this.initialConfig = config
 
     this.userPromiseResovler = () => {}
-    this._client = optimizely.createInstance(config)
+
+    const configWithClientEngine = {
+      ...config,
+      clientEngine: 'react-sdk',
+    }
+    this._client = optimizely.createInstance(configWithClientEngine)
 
     this.userPromise = new Promise(resolve => {
       this.userPromiseResovler = resolve

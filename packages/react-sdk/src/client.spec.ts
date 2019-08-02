@@ -75,9 +75,17 @@ describe('ReactSDKClient', () => {
   it('provides access to the underlying client', () => {
     const instance = createInstance(config)
     expect(createInstanceSpy).toBeCalledTimes(1)
-    expect(createInstanceSpy).toBeCalledWith(config)
     expect(createInstanceSpy.mock.results[0].isThrow).toBe(false)
     expect(createInstanceSpy.mock.results[0].value).toBe(instance.client)
+  })
+
+  it('adds clientEngine react-sdk the config, and passed the config to createInstance', () => {
+    createInstance(config)
+    expect(createInstanceSpy).toBeCalledTimes(1)
+    expect(createInstanceSpy).toBeCalledWith({
+      ...config,
+      clientEngine: 'react-sdk',
+    })
   })
 
   it('provides access to the underlying client notificationCenter', () => {
