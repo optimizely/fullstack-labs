@@ -92,7 +92,7 @@ npm install @optimizely/react-sdk
 The `ReactSDKClient` client created via `createInstance` is the programmatic API to evaluating features and experiments and tracking events. The `ReactSDKClient` is what powers the rest of the ReactSDK internally.
 
 *arguments*
-* `config : optimizely.ClientConfig` Object with SDK configuration parameters. This has the same format as the object passed to the `createInstance` method of the core `@optimizely/javascript-sdk` module. For details on this object, see the following pages from the developer docs:
+* `config : object` Object with SDK configuration parameters. This has the same format as the object passed to the `createInstance` method of the core `@optimizely/javascript-sdk` module. For details on this object, see the following pages from the developer docs:
   - [Instantiate](https://docs.developers.optimizely.com/full-stack/docs/instantiate)
   - [Initialize a non-mobile SDK](https://docs.developers.optimizely.com/full-stack/docs/initialize-a-non-mobile-sdk)
   - [JavaScript: Update datafiles](https://docs.developers.optimizely.com/full-stack/docs/javascript-update-datafiles)
@@ -117,8 +117,8 @@ Required at the root level. Leverages React’s `Context` API to allow access to
 * `user: { id: string; attributes?: { [key: string]: any } } | Promise` User info object - `id` and `attributes` will be passed to the SDK for every feature flag, A/B test, or `track` call, or a `Promise` for the same kind of object
 * `timeout : Number` (optional) The amount of time for OptimizelyExperiment and OptimizelyFeature components to render `null` while waiting for the SDK instance to become ready, before resolving..
 * `isServerSide : Boolean` (optional) must pass `true` here for server side rendering
-* `userId : String` (optional) Another way to provide user id. The `user` object prop takes precedence when both are provided.
-* `userAttributes : Object` : (optional) Another way to provide user attributes. The `user` object prop takes precedence when both are provided.
+* `userId : String` (optional) ***Deprecated, prefer using `user` instead***. Another way to provide user id. The `user` object prop takes precedence when both are provided.
+* `userAttributes : Object` : (optional) ***Deprecated, prefer using `user` instead***. Another way to provide user attributes. The `user` object prop takes precedence when both are provided.
 ### Readiness
 Before rendering real content, both the datafile and the user must be available to the SDK.
 #### Load the datafile synchronously
