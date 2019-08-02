@@ -396,30 +396,7 @@ The following type definitions are used in the `ReactSDKClient` interface:
 
 ## Rollout or experiment a feature user-by-user
 
-To rollout or experiment on a feature by user rather than by random percentage, setup an attribute in Optimizely and create an Audience, which uses that attribute. Then pass along this attribute to the Provider.
-```jsx
-import { OptimizelyProvider } from '@optimizely/react-sdk'
-
-function AppComponent() {
-  return (
-    <OptimizelyProvider
-      optimizely={optimizely}
-      timeout={500}
-      user={{
-        id: 'user123',          // UserId used for random percentage rollout
-        attributes: {
-          user_id: 'user123'    // Attribute used for non-random audience rollout
-          plan_type: 'bronze',
-        },
-      }}
-    >
-    {/* Your app here */}
-    </OptimizelyProvider>
-  )
-}
-```
-
-This kind of targeted rollout or experiment is used when running a beta. For more information see the documentation on how to [run a beta](https://docs.developers.optimizely.com/rollouts/docs/run-a-beta).
+To rollout or experiment on a feature by user rather than by random percentage, you will use Attributes and Audiences. To do this, follow the documentation on how to [run a beta](https://docs.developers.optimizely.com/rollouts/docs/run-a-beta) using the React code samples.
 
 
 ## Server Side Rendering
