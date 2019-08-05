@@ -32,6 +32,8 @@ export type OnReadyResult = {
   reason?: string
 }
 
+const REACT_SDK_CLIENT_ENGINE = 'react-sdk'
+
 export interface ReactSDKClient extends optimizely.Client {
   user: UserContext
 
@@ -146,7 +148,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
 
     const configWithClientEngine = {
       ...config,
-      clientEngine: 'react-sdk',
+      clientEngine: REACT_SDK_CLIENT_ENGINE,
     }
     this._client = optimizely.createInstance(configWithClientEngine)
 
