@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## 0.4.0-beta1
 * Added logOnlyEventDispatcher, which can be used to disable sending all events to Optimizely's results backend
 * Added support for ref forwarding and copying of non-React statics in withOptimizely HOC
 
