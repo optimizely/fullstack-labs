@@ -55,7 +55,7 @@
   dependencies:
     uuid "^3.3.2"
 
-"@optimizely/optimizely-sdk@3.3.0-beta":
+"@optimizely/optimizely-sdk@^3.3.0-beta":
   version "3.3.0-beta"
   resolved "https://registry.yarnpkg.com/@optimizely/optimizely-sdk/-/optimizely-sdk-3.3.0-beta.tgz#6c2fb216637b520fa5e819b44170b5afe6e346c5"
   integrity sha512-mHSxZmi3nmjXlSFsk6KE+fxlHnz+iGziNKJZ3MNCPG6ifZNlntsw3w+slsYKje6fmHur9Xp+2A2USXhosSdDyQ==
@@ -2427,10 +2427,15 @@ json-schema-traverse@^0.4.1:
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
   integrity sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
 
-json-schema@0.2.3, json-schema@^0.2.3:
+json-schema@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.3.tgz#b480c892e59a2f05954ce727bd3f2a4e882f9e13"
   integrity sha1-tIDIkuWaLwWVTOcnvT8qTogvnhM=
+
+json-schema@^0.2.3:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/json-schema/-/json-schema-0.2.5.tgz#97997f50972dd0500214e208c407efa4b5d7063b"
+  integrity sha512-gWJOWYFrhQ8j7pVm0EM8Slr+EPVq1Phf6lvzvD/WCeqkrx/f2xBI0xOsRRS9xCn3I4vKtP519dvs3TP09r24wQ==
 
 json-stringify-safe@~5.0.1:
   version "5.0.1"

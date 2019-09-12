@@ -537,6 +537,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
     if (user.id === null) {
       return null
     }
+    // @ts-ignore
     return this._client.getFeatureVariable(
       feature,
       variable,
