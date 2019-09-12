@@ -198,7 +198,7 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
 
   setUser(userInfo: { id?: string; attributes?: { [key: string]: any } }): void {
     // TODO add check for valid user
-    if (userInfo.id) {
+    if (userInfo.id || userInfo.id === "") {
       this.user.id = userInfo.id
     }
     if (userInfo.attributes) {
