@@ -87,6 +87,13 @@ export interface ReactSDKClient extends optimizely.Client {
     overrideAttributes?: optimizely.UserAttributes,
   ): number | null
 
+  getFeatureVariable(
+    featureKey: string,
+    variableKey: string,
+    overrideUserId?: string,
+    overrideAttributes?: optimizely.UserAttributes,
+  ): any | null
+
   isFeatureEnabled(
     featureKey: string,
     overrideUserId?: string,
@@ -503,6 +510,34 @@ class OptimizelyReactSDKClient implements ReactSDKClient {
       return null
     }
     return this._client.getFeatureVariableDouble(
+      feature,
+      variable,
+      user.id,
+      user.attributes,
+    )
+  }
+
+  /**
+   * Returns value for the given variable attached to the given feature
+   * flag
+   * @param {string} feature
+   * @param {string} variable
+   * @param {string} [overrideUserId]
+   * @param {optimizely.UserAttributes} [overrideAttributes]
+   * @returns {(any | null)}
+   * @memberof OptimizelyReactSDKClient
+   */
+  public getFeatureVariable(
+    feature: string,
+    variable: string,
+    overrideUserId?: string,
+    overrideAttributes?: optimizely.UserAttributes,
+  ): number | null {
+    const user = this.getUserContextWithOverrides(overrideUserId, overrideAttributes)
+    if (user.id === null) {
+      return null
+    }
+    return this._client.getFeatureVariable(
       feature,
       variable,
       user.id,
